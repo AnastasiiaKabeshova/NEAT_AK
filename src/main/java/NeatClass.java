@@ -58,6 +58,12 @@ public class NeatClass {
      * Probability of a mate being outside species 0.001
      */
     public static double p_interspecies_mate_rate;
+    /**
+     * training coefficient for back propagandation
+     */
+    public static double p_training_coefficient;
+   
+    
     //TODO
     private void addRandomSimpleOrganism() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

@@ -18,7 +18,7 @@ public class Link {
         in_node = nodeIn;
         out_node = nodeOut;
         nodeOut.addIncomingLink(this); 
-        nodeIn.addOutgomingLink(this);
+        nodeIn.addOutgoingLink(this);
     }
 
     public Link(double w, Node nodeIn, Node nodeOut) {
@@ -26,7 +26,7 @@ public class Link {
         in_node = nodeIn;
         out_node = nodeOut;
         nodeOut.addIncomingLink(this);
-        nodeIn.addOutgomingLink(this);
+        nodeIn.addOutgoingLink(this);
     }
     
     public double getWeight() {

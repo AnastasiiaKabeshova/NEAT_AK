@@ -19,7 +19,7 @@ public final class Node extends NeatClass {
     private double answer; // only for output layer!!!
     private double misalignment; //невязка сети
     List<Link> incomingLinks; // All inputs of neuron
-    List<Link> outgomingLinks; // All outs of neuron
+    List<Link> outgoingLinks; // All outs of neuron
 
     public Node() {
     }
@@ -27,28 +27,32 @@ public final class Node extends NeatClass {
     public Node(double newPotential, NodeType node_type) {
         this.setPotential(newPotential);
         incomingLinks = new ArrayList<Link>();
-        outgomingLinks = new ArrayList<Link>();
+        outgoingLinks = new ArrayList<Link>();
         type = node_type;
     }
 
-    public Link getLink(int index) {
+    public Link getIncomingLink(int index) {
         return incomingLinks.get(index);
+    }
+    
+    public Link getOutgoingLink(int index) {
+        return outgoingLinks.get(index);
     }
 
     public int getIncomingLinksNumber() {
         return incomingLinks.size();
     }
-    
-    public int getOutgomingLinksNumber() {
-        return outgomingLinks.size();
+
+    public int getOutgoingLinksNumber() {
+        return outgoingLinks.size();
     }
 
     public void addIncomingLink(Link l) {
         incomingLinks.add(l);
     }
-    
-    public void addOutgomingLink(Link l) {
-        outgomingLinks.add(l);
+
+    public void addOutgoingLink(Link l) {
+        outgoingLinks.add(l);
     }
 
     //modified sigmoidal transfer function
@@ -80,8 +84,12 @@ public final class Node extends NeatClass {
     }
     // for other layers
 
-    public void ajErrorHiddenLayer(double sumChildren) {
-        setMisalignment(getPotential() * (1 - getPotential()) * sumChildren); //для скрытых слоев - по невязке предыдущего слоя
+    public void ajErrorHiddenLayer() {
+        double sumChildren = 0.0;
+        for (int t = 0; t < getOutgoingLinksNumber(); t++) { // for all neurons on next layer
+            sumChildren += this.getMisalignment() * this.getOutgoingLink(t).getWeight();
+        }
+        this.setMisalignment(getPotential() * (1 - getPotential()) * sumChildren); //для скрытых слоев - по невязке предыдущего слоя
     }
 
     @Override

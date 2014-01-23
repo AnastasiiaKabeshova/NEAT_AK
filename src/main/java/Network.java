@@ -52,7 +52,7 @@ public class Network {
     private void calculateNode(Node n, Set<Node> doneNodes) {
         if (!doneNodes.contains(n)) {
             for (int i = 0; i < n.getIncomingLinksNumber(); i++) {
-                calculateNode(n.getLink(i).getIn_node(), doneNodes);
+                calculateNode(n.getIncomingLink(i).getIn_node(), doneNodes);
             }
         }
         n.countOut();
@@ -76,26 +76,29 @@ public class Network {
         doneNodes.addAll(outNodes);
         //errors and adjustment for hidden layers
         for (int i = hiddenNodes.size(); i > 0; i--) {
-            for (int j = 0; j < allLayers.get(i).getCount(); j++) {
-                double sumChildren = 0;
-                for (int t = 0; t < allLayers.get(i + 1).getCount(); t++) { // for all neurons on next layer
-                    sumChildren += allLayers.get(i + 1).getNeuron(t).getMisalignment() * allLayers.get(i + 1).getNeuron(t).getLink(j).getWeight();
-                }
-                allLayers.get(i).getNeuron(j).ajErrorHiddenLayer(sumChildren);
-            }
+            calculateMisalignment(hiddenNodes.get(i), doneNodes);
         }
 
         //Adjustment of synaptic weights on the layers
-        for (int i = allLayers.size() - 1; i > 0; i--) {
-            for (int j = 0; j < allLayers.get(i).getCount(); j++) {
-                double lErr = allLayers.get(i).getNeuron(j).getMisalignment();
-                for (int t = 0; t < allLayers.get(i).getNeuron(j).getLinkCount(); t++) {
-                    double oldWeight = allLayers.get(i).getNeuron(j).getLink(t).getWeight();
-                    double newWeight = oldWeight + trainingCoef * lErr * allLayers.get(i).getNeuron(j).incomingLinks.get(t).getNeuron().getPotential();
-                    allLayers.get(i).getNeuron(j).getLink(t).setWeight(newWeight);
-                }
+        for(Node nodeVar : doneNodes){
+            double lErr = nodeVar.getMisalignment();
+            for (int t = 0; t < nodeVar.getIncomingLinksNumber(); t++) {
+                double oldWeight = nodeVar.getIncomingLink(t).getWeight();
+                double potential = nodeVar.getIncomingLink(t).getOut_node().getPotential();
+                double newWeight = oldWeight + NeatClass.p_training_coefficient * lErr * potential;
+                nodeVar.getIncomingLink(t).setWeight(newWeight);
             }
         }
+    }
+
+    private void calculateMisalignment(Node n, Set<Node> doneNodes) {
+        if (!doneNodes.contains(n)) {
+            for (int i = 0; i < n.getOutgoingLinksNumber(); i++) {
+                calculateNode(n.getOutgoingLink(i).getOut_node(), doneNodes);
+            }
+        }
+        n.ajErrorHiddenLayer();
+        doneNodes.add(n);
     }
 
     private void addNode4everyone(Node n) {
