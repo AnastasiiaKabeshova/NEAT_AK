@@ -45,7 +45,7 @@ public class NeatClass {
      * Probability of switch status to ena of gene 
      * 75% chance that an inherited gene was disabled if it was disable in either parent
      */ 
-    public static double p_mutate_gene_reenable_prob;
+    public static double p_mutate_gene_reenable_prob = 0.15;
     /**
      * the probability of adding a new node was 0.03
      */

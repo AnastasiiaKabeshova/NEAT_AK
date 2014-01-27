@@ -6,6 +6,7 @@ import java.util.List;
  * @author Anastasiia
  */
 public class Genome {
+
     /**
      * Numeric identification for this genotype
      */
@@ -16,8 +17,7 @@ public class Genome {
      * provide an evolutionary history of innovation and link-building
      */
     private List<Gene> genes;
-    
-   
+
     public Genome(int id, List<Gene> g) {
         genome_id = id;
         genes = g;
@@ -34,17 +34,17 @@ public class Genome {
     public List<Gene> getGenes() {
         return genes;
     }
-    
+
     public void setGenes(List<Gene> genes) {
         this.genes = genes;
     }
-    
-    public int getNumberGenes () {
+
+    public int getNumberGenes() {
         return (this.genes.size());
     }
-    
-    public int lastGeneInovNumber () {
-        return (this.genes.get(genes.size()-1).getInnovation_num());
+
+    public int lastGeneInovNumber() {
+        return (this.genes.get(genes.size() - 1).getInnovation_num());
     }
 
     public Genome(int id, IOStorage xFile) {
@@ -58,29 +58,28 @@ public class Genome {
     }
 
     public void mutate_addNode(int linkInnovNum) {
-        genes.get(linkInnovNum).setEnable(false);  // The old connection is disabled
+        int linkIndex = findNumberByInnovNumber(linkInnovNum);
+        genes.get(linkIndex).setEnable(false);  // The old connection is disabled
 
-        Node nodeIn = genes.get(linkInnovNum).getLink().getIn_node();
-        Node nodeOut = genes.get(linkInnovNum).getLink().getOut_node();
-        
-        Node newNode = new Node();
+        Node nodeIn = genes.get(linkIndex).getLink().getIn_node();
+        Node nodeOut = genes.get(linkIndex).getLink().getOut_node();
+
+        Node newNode = new Node(NodeType.HIDDEN);
         newNode.setNodeID(OrganismFactory.nextEnabledNodeID());
-  
-        double weight1 = 1;
-        double weight2 = genes.get(linkInnovNum).getLink().getWeight();
 
-        Link newLink1 = new Link(weight1, newNode, nodeOut);
-        Link newLink2 = new Link(weight2, nodeIn, newNode);
-        
+        double weight1 = 1;
+        double weight2 = genes.get(linkIndex).getLink().getWeight();
+
+        Link newLink2 = new Link(weight1, newNode, nodeOut);
+        Link newLink1 = new Link(weight2, nodeIn, newNode);
+
         int last_innovNum = OrganismFactory.nextEnabeledInnovetionNumber();
-        boolean enable = genes.get(linkInnovNum).isEnable();
+        boolean enable = genes.get(linkIndex).isEnable();
         Gene newGene1 = new Gene(newLink1, last_innovNum + 1, enable);
         Gene newGene2 = new Gene(newLink2, last_innovNum + 2, enable);
         //two new connections are added to the genome
         genes.add(newGene1);
         genes.add(newGene2);
-        
-        //TODO add links in Incomings and outgoings!!!
     }
 
     public void mutate_addConnection(Node nodeIn, Node nodeOut, boolean enable) {
@@ -92,7 +91,6 @@ public class Genome {
     }
 
     public void mutate_linkWeight(double power, double rate, int mutation_type) {
-        
     }
 
     /*
@@ -116,11 +114,19 @@ public class Genome {
 
 //    public Network genesis(int id) {
 //    }
-
     private void op_view() {
         System.out.print("\n GENOME START   id=" + genome_id);
         System.out.print("\n  genes are :" + genes.size());
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public int findNumberByInnovNumber(int linkInnovNum) {
+        int number = -1;
+        for (int i = 0; i < this.getNumberGenes(); i++) {
+            if (genes.get(i).getInnovation_num() == linkInnovNum) {
+                number = i;
+            }
+        }
+        return number;
+    }
 }

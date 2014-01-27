@@ -25,7 +25,7 @@ public class Organism{
     /**
      * The Organism's phenotype
      */
-    public Network net;
+    private Network net;
     /**
      * The Organism's genotype
      */
@@ -64,42 +64,6 @@ public class Organism{
         species = null;
         expected_offspring = 0;
         error = 0;
-    }
-
-    public Genome getGenome() {
-        return genome;
-    }
-
-    public void setGenome(Genome genome) {
-        this.genome = genome;
-    }
-
-    /**
-     * @return the orig_fitness
-     */
-    public double getOrig_fitness() {
-        return orig_fitness;
-    }
-
-    /**
-     * @param orig_fitness the orig_fitness to set
-     */
-    public void setOrig_fitness(double orig_fitness) {
-        this.orig_fitness = orig_fitness;
-    }
-
-    /**
-     * @return the fitness
-     */
-    public double getFitness() {
-        return fitness;
-    }
-
-    /**
-     * @param fitness the fitness to set
-     */
-    public void setFitness(double fitness) {
-        this.fitness = fitness;
     }
 
     public int getLastGeneInovNumber() {
@@ -184,8 +148,8 @@ public class Organism{
     }
 
     public void countFitnessOut() {
-       net.changeOuter();
-       this.setFitness(net.getError4Fitness());
+        getNet().changeOuter();
+       this.setFitness(getNet().getError4Fitness());
     }
     
     
@@ -205,6 +169,49 @@ public class Organism{
         }
         delta = NeatClass.p_excess_coeff * E / N + NeatClass.p_disjoint_coeff * D / N + NeatClass.p_mutdiff_coeff * W;
         return (delta);
+    }
+    
+    public Genome getGenome() {
+        return genome;
+    }
+
+    public void setGenome(Genome genome) {
+        this.genome = genome;
+    }
+
+    /**
+     * @return the orig_fitness
+     */
+    public double getOrig_fitness() {
+        return orig_fitness;
+    }
+
+    /**
+     * @param orig_fitness the orig_fitness to set
+     */
+    public void setOrig_fitness(double orig_fitness) {
+        this.orig_fitness = orig_fitness;
+    }
+
+    /**
+     * @return the fitness
+     */
+    public double getFitness() {
+        return fitness;
+    }
+
+    /**
+     * @param fitness the fitness to set
+     */
+    public void setFitness(double fitness) {
+        this.fitness = fitness;
+    }
+
+    /**
+     * @return the net
+     */
+    public Network getNet() {
+        return net;
     }
     
 }

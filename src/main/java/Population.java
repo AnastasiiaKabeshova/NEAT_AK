@@ -76,4 +76,13 @@ public class Population {
         }
         return sum;
     }
+    
+    public void GA() {
+        /**
+         * mutation
+         * crossover
+         * specification (speciate)
+         * провести селекцию на уровне Популяции
+         */
+    }
 }

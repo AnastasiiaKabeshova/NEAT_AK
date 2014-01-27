@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 
+import java.util.Arrays;
 import java.util.List;
 import junit.framework.Assert;
 import org.junit.After;
@@ -38,27 +39,38 @@ public class GenomeTest {
     public void tearDown() {
     }
 
- 
+    @Test
+    public void testFindNumberByInnovNumber() {
+        OrganismFactory fabrica = new OrganismFactory ();
+        List<Double> inNodes = Arrays.asList(1.0,2.0,3.0);
+        List<Double> outNodes = Arrays.asList(1.0);
+        Organism o =  fabrica.createOrganism(inNodes, outNodes);
+        Genome instance = o.getGenome();
+        
+        int linkInnovNum = 3;
+        int index = instance.findNumberByInnovNumber(linkInnovNum);
+        
+        Assert.assertEquals("expected that was added", 2, index);
+    }
 
     /**
      * Test of mutate_addNode method, of class Genome.
      */
-    @Ignore
+
     @Test
     public void testMutate_addNode() {
         System.out.println("mutate_addNode");
-        Population pop = null;
+        OrganismFactory fabrica = new OrganismFactory ();
+        List<Double> inNodes = Arrays.asList(1.0,2.0,3.0);
+        List<Double> outNodes = Arrays.asList(1.0);
+        Organism o =  fabrica.createOrganism(inNodes, outNodes);
+        Genome instance = o.getGenome();
         
-        int linkInnovNum = 0;
-        Genome instance = null;
-
-        int oldNodeNumber = instance.getNumberGenes();
+        int linkInnovNum = 5;
+        int oldNodeQuantity = instance.getNumberGenes();
         
         instance.mutate_addNode(linkInnovNum);
-        Assert.assertEquals("expected that was added", oldNodeNumber + 1, instance.getNumberGenes());
-         
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Assert.assertEquals("expected that was added", oldNodeQuantity + 2, instance.getNumberGenes());
     }
 
     /**

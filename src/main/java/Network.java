@@ -1,5 +1,7 @@
 
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -67,7 +69,7 @@ public class Network {
         return error;
     }
 
-    public void ajustmentWeigthAllLayers() {
+    public void ajustmentWeigth() {
         //errors and adjustment for output layer
         for (int i = 0; i < outNodes.size(); i++) {
             outNodes.get(i).ajErrorOutputLayer();
@@ -116,4 +118,44 @@ public class Network {
             }
         }
     }
+    
+    /************************************************************************/
+    //tool for mutation AddConnection
+    public Node selectRandomNode (Node nodeIn) {
+        List<Node> selectCollection = new ArrayList<Node>() {};
+        if (nodeIn.getType() == NodeType.INPUT) {
+            selectCollection.addAll(outNodes);
+            selectCollection.addAll(hiddenNodes);
+        } else if (nodeIn.getType() == NodeType.OUTPUT) {
+            selectCollection.addAll(inNodes);
+            selectCollection.addAll(hiddenNodes);
+        } else if (nodeIn.getType() == NodeType.HIDDEN) {
+            selectCollection.addAll(inNodes);
+            selectCollection.addAll(hiddenNodes);
+            selectCollection.remove(nodeIn);
+            selectCollection.addAll(outNodes);
+        }
+        int choosenIndex = -1;
+        while (choosenIndex == -1) {
+            choosenIndex = getIndex4RandomNode(selectCollection, nodeIn);
+        }
+        return selectCollection.get(choosenIndex);
+    }
+
+    private int getIndex4RandomNode(List<Node> selectCollection, Node nodeIn) {
+        int Min = 0, Max = selectCollection.size() - 1;
+        int randomIndex = Min + (int) (Math.random() * ((Max - Min) + 1));
+        for (int i = 0; i < selectCollection.get(randomIndex).getIncomingLinksNumber(); i++) {
+            if (selectCollection.get(randomIndex).getIncomingLink(i).getIn_node() == nodeIn) {
+                randomIndex = -1;
+            }
+        }
+        for (int i = 0; i < selectCollection.get(randomIndex).getOutgoingLinksNumber(); i++) {
+            if (selectCollection.get(randomIndex).getOutgoingLink(i).getOut_node() == nodeIn) {
+                randomIndex = -1;
+            }
+        }
+        return randomIndex;
+    }
+    /************************************************************************/
 }

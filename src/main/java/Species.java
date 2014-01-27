@@ -173,21 +173,19 @@ public class Species extends NeatClass {
             i++;
             this.organisms.add(offspring);
         }
-        //mutation
-        //specification (speciate)
-        //провести селекцию на уровне Популяции
-        
-        // обновить сеть в организме!!!
     }
 
-    public void mutation(Organism offspring) {
+    public void mutation(Organism offspring) { // before crossover
         for (int i = 0; i < offspring.getGenomeSize(); i++) {
             if (Math.random() < NeatClass.p_mutate_add_node) { // p_mutate_add_node < p_mutate_add_link!!!
                 offspring.getGenome().mutate_addNode(offspring.getGenome().getGenes().get(i).getInnovation_num());
             } else if(Math.random() < NeatClass.p_mutate_add_link) {
-                // TODO ?????
-                // offspring.getGenome().mutate_addConnection(null, null, true);
+                // get second random Nodes in Network
+                Node in = offspring.getGenome().getGenes().get(i).getLink().getIn_node();
+                Node out = offspring.getNet().selectRandomNode(in);
+                offspring.getGenome().mutate_addConnection(in, out, true);
             }
         }
+        //* обновить сеть в организме!!!
     }
 }
