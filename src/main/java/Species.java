@@ -10,16 +10,25 @@ import java.util.List;
  * topologies are in the same species. This task appears to be a topology
  * matching problem.
  */
-public class Species extends NeatClass {
+public final class Species extends NeatClass {
     /* list of all organisms in the Species*/
-    public List<Organism> organisms;
+    public List<Organism> organisms = new ArrayList<Organism>();
     /* The average fitness of the Species*/
     double ave_fitness;
     /* Max fitness of the Species*/
     double max_fitness;
     /* The max it ever had*/
     double max_fitness_ever;
+    /* permanent representative */
+    int representativeIndex = 0;
 
+    public Species () {
+    }
+    
+    public Species (Organism newOrg) {
+        addOrganism(newOrg);
+    }
+    
     /*
      * add an organism to list of organisms in this specie
      */
@@ -33,6 +42,10 @@ public class Species extends NeatClass {
     
     public Organism getOrganism(int index) {
         return organisms.get(index);
+    }
+    
+    public Organism getRepresentOrganism() {
+        return organisms.get(representativeIndex);
     }
 
     public Organism makeOffspring(int organism1, int organism2) {
@@ -175,17 +188,18 @@ public class Species extends NeatClass {
         }
     }
 
-    public void mutation(Organism offspring) { // before crossover
-        for (int i = 0; i < offspring.getGenomeSize(); i++) {
+    public void mutation(Organism organism4mutation) { // before crossover
+        for (int i = 0; i < organism4mutation.getGenomeSize(); i++) {
             if (Math.random() < NeatClass.p_mutate_add_node) { // p_mutate_add_node < p_mutate_add_link!!!
-                offspring.getGenome().mutate_addNode(offspring.getGenome().getGenes().get(i).getInnovation_num());
+                organism4mutation.getGenome().mutate_addNode(organism4mutation.getGenome().getGenes().get(i).getInnovation_num());
             } else if(Math.random() < NeatClass.p_mutate_add_link) {
                 // get second random Nodes in Network
-                Node in = offspring.getGenome().getGenes().get(i).getLink().getIn_node();
-                Node out = offspring.getNet().selectRandomNode(in);
-                offspring.getGenome().mutate_addConnection(in, out, true);
+                Node in = organism4mutation.getGenome().getGenes().get(i).getLink().getIn_node();
+                Node out = organism4mutation.getNet().selectRandomNode(in);
+                organism4mutation.getGenome().mutate_addConnection(in, out, true);
             }
         }
-        //* обновить сеть в организме!!!
+        //refresh Network in organism
+        organism4mutation.setNet(new Network(organism4mutation.getGenome()));
     }
 }

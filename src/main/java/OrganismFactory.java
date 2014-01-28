@@ -4,30 +4,36 @@ import java.util.List;
 
 public class OrganismFactory {
 
-    private static int enabledNodeID = 1;
-    private static int enabledGenomeID = 1;
-    private static int enabledInnovetionNumber = 1;
+    private static int enableNodeID = 1;
+    private static int enableLinkID = 1;
+    private static int enableGenomeID = 1;
+    private static int enableInnovationNumber = 1;
 
     public static int nextEnabeledGenomeID() {
-        return enabledGenomeID++;
+        return enableGenomeID++;
     }
 
     public static int nextEnabeledInnovetionNumber() {
-        return enabledInnovetionNumber++;
+        return enableInnovationNumber++;
     }
 
     public static void resetIndexes() {
-        enabledNodeID = 1;
-        enabledInnovetionNumber = 1;
-        enabledGenomeID = 1;
+        enableNodeID = 1;
+        enableLinkID = 1;
+        enableInnovationNumber = 1;
+        enableGenomeID = 1;
     }
 
     public void setEnabeledInnovetionNumber(int num) {
-        enabledInnovetionNumber = num;
+        enableInnovationNumber = num;
     }
 
     public static int nextEnabledNodeID() {
-        return enabledNodeID++;
+        return enableNodeID++;
+    }
+    
+    public static int nextEnabledLinkID() {
+        return enableLinkID++;
     }
 
     public Organism createOrganism(List<Double> inNodes, List<Double> outNodes) {
@@ -54,6 +60,7 @@ public class OrganismFactory {
 
     public Organism createOrganism(List<Gene> genes) {
         Genome newGenome = new Genome(nextEnabeledGenomeID(), genes);
+        //refresh NET made in Organism constructor
         return (new Organism(newGenome));
     }
 

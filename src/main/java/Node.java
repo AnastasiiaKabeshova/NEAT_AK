@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -22,6 +23,14 @@ public final class Node extends NeatClass {
     List<Link> outgoingLinks; // All outs of neuron
 
     public Node() {
+        incomingLinks = new ArrayList<Link>();
+        outgoingLinks = new ArrayList<Link>();
+    }
+    
+    public Node(NodeType node_type) {
+        incomingLinks = new ArrayList<Link>();
+        outgoingLinks = new ArrayList<Link>();
+        type = node_type;
     }
 
     public Node(double newPotential, NodeType node_type) {
@@ -53,6 +62,24 @@ public final class Node extends NeatClass {
 
     public void addOutgoingLink(Link l) {
         outgoingLinks.add(l);
+    }
+    
+    public void removeIncomingLink (Link l) {
+        Iterator<Link> iter = incomingLinks.iterator();
+        while (iter.hasNext()) {
+            if (iter.next().getLinkID() == l.getLinkID()) {
+                iter.remove();
+            }
+	}
+    }
+    
+    public void removeOutgoingLink (Link l) {
+        Iterator<Link> iter = outgoingLinks.iterator();
+        while (iter.hasNext()) {
+            if (iter.next().getLinkID() == l.getLinkID()) {
+                iter.remove();
+            }
+	}
     }
 
     //modified sigmoidal transfer function

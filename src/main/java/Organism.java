@@ -213,5 +213,12 @@ public class Organism{
     public Network getNet() {
         return net;
     }
+
+    /**
+     * @param net the net to set
+     */
+    public void setNet(Network net) {
+        this.net = net;
+    }
     
 }

@@ -1,7 +1,5 @@
 
-import com.sun.org.apache.bcel.internal.generic.RETURN;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,8 +22,14 @@ public class Network {
     public Network(Genome xgenome) {
         for (int i = 0; i < xgenome.getNumberGenes(); i++) {
             Link l = xgenome.getGenes().get(i).getLink();
-            addNode4everyone(l.getOut_node());
-            addNode4everyone(l.getIn_node());
+            if (xgenome.getGenes().get(i).isEnable()) {
+                addNode4everyone(l.getOut_node());
+                addNode4everyone(l.getIn_node());
+            } else {
+                // if Link is disable -> delete this Link from input and output
+                l.getIn_node().removeOutgoingLink(l);
+                l.getOut_node().addIncomingLink(l);
+            }
         }
     }
 
@@ -82,7 +86,7 @@ public class Network {
         }
 
         //Adjustment of synaptic weights on the layers
-        for(Node nodeVar : doneNodes){
+        for (Node nodeVar : doneNodes) {
             double lErr = nodeVar.getMisalignment();
             for (int t = 0; t < nodeVar.getIncomingLinksNumber(); t++) {
                 double oldWeight = nodeVar.getIncomingLink(t).getWeight();
@@ -118,11 +122,14 @@ public class Network {
             }
         }
     }
-    
-    /************************************************************************/
+
+    /**
+     * *********************************************************************
+     */
     //tool for mutation AddConnection
-    public Node selectRandomNode (Node nodeIn) {
-        List<Node> selectCollection = new ArrayList<Node>() {};
+    public Node selectRandomNode(Node nodeIn) {
+        List<Node> selectCollection = new ArrayList<Node>() {
+        };
         if (nodeIn.getType() == NodeType.INPUT) {
             selectCollection.addAll(outNodes);
             selectCollection.addAll(hiddenNodes);
@@ -157,5 +164,7 @@ public class Network {
         }
         return randomIndex;
     }
-    /************************************************************************/
+    /**
+     * *********************************************************************
+     */
 }

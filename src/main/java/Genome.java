@@ -73,10 +73,11 @@ public class Genome {
         Link newLink2 = new Link(weight1, newNode, nodeOut);
         Link newLink1 = new Link(weight2, nodeIn, newNode);
 
-        int last_innovNum = OrganismFactory.nextEnabeledInnovetionNumber();
+        int enableInnovNum1 = OrganismFactory.nextEnabeledInnovetionNumber();
+        int enableInnovNum2 = OrganismFactory.nextEnabeledInnovetionNumber();
         boolean enable = genes.get(linkIndex).isEnable();
-        Gene newGene1 = new Gene(newLink1, last_innovNum + 1, enable);
-        Gene newGene2 = new Gene(newLink2, last_innovNum + 2, enable);
+        Gene newGene1 = new Gene(newLink1, enableInnovNum1, enable);
+        Gene newGene2 = new Gene(newLink2, enableInnovNum2, enable);
         //two new connections are added to the genome
         genes.add(newGene1);
         genes.add(newGene2);
@@ -85,8 +86,8 @@ public class Genome {
     public void mutate_addConnection(Node nodeIn, Node nodeOut, boolean enable) {
         double weight = Math.random() - 0.5; //[-0.5; 0.5];
         Link newLink = new Link(weight, nodeIn, nodeOut);
-        int last_innovNum = OrganismFactory.nextEnabeledInnovetionNumber();
-        Gene newGene = new Gene(newLink, last_innovNum + 1, enable);
+        int enableInnovNum = OrganismFactory.nextEnabeledInnovetionNumber();
+        Gene newGene = new Gene(newLink, enableInnovNum, enable);
         genes.add(newGene);
     }
 
