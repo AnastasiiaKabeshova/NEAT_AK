@@ -32,7 +32,7 @@ public class NeatClass {
     /**
      * * Size of population
      */
-    public static int p_pop_size;
+    public static int p_pop_size = 150;
     /**
      * * Age where Species starts to be penalized (15)
      */

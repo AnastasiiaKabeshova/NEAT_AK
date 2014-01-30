@@ -124,4 +124,8 @@ public final class Population {
     public void setSize(int size) {
         this.size = size;
     }
+    
+    public int getSpeciesNumber() {
+        return species.size();
+    }
 }
