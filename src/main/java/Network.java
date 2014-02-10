@@ -22,13 +22,14 @@ public class Network {
     public Network(Genome xgenome) {
         for (int i = 0; i < xgenome.getNumberGenes(); i++) {
             Link l = xgenome.getGenes().get(i).getLink();
+
             if (xgenome.getGenes().get(i).isEnable()) {
-                addNode4everyone(l.getOut_node());
                 addNode4everyone(l.getIn_node());
+                addNode4everyone(l.getOut_node());
             } else {
                 // if Link is disable -> delete this Link from input and output
                 l.getIn_node().removeOutgoingLink(l);
-                l.getOut_node().addIncomingLink(l);
+                l.getOut_node().removeIncomingLink(l);
             }
         }
     }
@@ -44,6 +45,10 @@ public class Network {
 
     public void addHiddenNode(Node h) {
         hiddenNodes.add(h);
+    }
+    
+    public int getNumberHidden() {
+        return (hiddenNodes.size());
     }
 
     public void changeOuter() {
@@ -128,8 +133,7 @@ public class Network {
      */
     //tool for mutation AddConnection
     public Node selectRandomNode(Node nodeIn) {
-        List<Node> selectCollection = new ArrayList<Node>() {
-        };
+        List<Node> selectCollection = new ArrayList<Node>();
         if (nodeIn.getType() == NodeType.INPUT) {
             selectCollection.addAll(outNodes);
             selectCollection.addAll(hiddenNodes);
@@ -150,15 +154,10 @@ public class Network {
     }
 
     private int getIndex4RandomNode(List<Node> selectCollection, Node nodeIn) {
-        int Min = 0, Max = selectCollection.size() - 1;
+        int Min = 0, Max = selectCollection.size()-1;
         int randomIndex = Min + (int) (Math.random() * ((Max - Min) + 1));
         for (int i = 0; i < selectCollection.get(randomIndex).getIncomingLinksNumber(); i++) {
             if (selectCollection.get(randomIndex).getIncomingLink(i).getIn_node() == nodeIn) {
-                randomIndex = -1;
-            }
-        }
-        for (int i = 0; i < selectCollection.get(randomIndex).getOutgoingLinksNumber(); i++) {
-            if (selectCollection.get(randomIndex).getOutgoingLink(i).getOut_node() == nodeIn) {
                 randomIndex = -1;
             }
         }

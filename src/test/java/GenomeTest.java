@@ -90,20 +90,4 @@ public class GenomeTest {
         fail("The test case is a prototype.");
     }
 
-    /**
-     * Test of mutate_linkWeight method, of class Genome.
-     */
-    @Ignore
-    @Test
-    public void testMutate_linkWeight() {
-        System.out.println("mutate_linkWeight");
-        double power = 0.0;
-        double rate = 0.0;
-        int mutation_type = 0;
-        Genome instance = null;
-        instance.mutate_linkWeight(power, rate, mutation_type);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
 }

@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Assert;
@@ -117,6 +118,29 @@ public class OrganismTest {
 
     private void setWeigth(Organism o2, int index, double w) {
         o2.getGenome().getGenes().get(index).getLink().setWeight(w);
+    }
+    
+    @Test
+    public void testCountDistanceDelta () {
+        OrganismFactory fabrica = new OrganismFactory ();
+        OrganismFactory.resetIndexes();
+        List<Double> inNodes1 = Arrays.asList(1.0,2.0,3.0,4.0,5.0);
+        List<Double> outNodes = Arrays.asList(1.0,2.0);
+        Organism o1 =  fabrica.createOrganism(inNodes1, outNodes);
+        
+        List<Gene> genes = new ArrayList<Gene>();
+        genes.add(o1.getGenome().getGenes().get(1));
+        genes.add(o1.getGenome().getGenes().get(2));
+        genes.add(o1.getGenome().getGenes().get(3));
+        genes.add(o1.getGenome().getGenes().get(7));
+        genes.add(o1.getGenome().getGenes().get(8));
+        genes.add(o1.getGenome().getGenes().get(9));
+        Organism o2 =  fabrica.createOrganism(genes);
+        
+        
+        double actual = o2.countDistanceDelta(o1);
+        double correct = 0.4;
+        Assert.assertEquals("distance was wrong calculated", correct, actual, 0.01);
     }
     
 }

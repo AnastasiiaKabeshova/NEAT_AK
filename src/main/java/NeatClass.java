@@ -5,27 +5,27 @@
  */
 public class NeatClass {
     /**
-     * * factor multiply for gene not equal (2.0)
+     * * factor multiply for gene not equal 
      */
-    public static double p_disjoint_coeff; //c2
+    public static double p_disjoint_coeff = 1.0; //c2
     /**
-     * * factor multiply for gene excedeed (2.0)
+     * * factor multiply for gene excedeed
      */
-    public static double p_excess_coeff; //c1
+    public static double p_excess_coeff = 1.0; //c1
     /**
-     * * factor multiply weight difference (1.0)
+     * * factor multiply weight difference  0.4 - 3.0
      */
-    public static double p_mutdiff_coeff; //c3
+    public static double p_mutdiff_coeff = 0.4; //c3
     /**
-     * * threshold under which two Genomes are the same species (6.0)
+     * * threshold under which two Genomes are the same species
      */
-    public static double p_compat_threshold;
+    public static double p_compat_threshold = 3.0;
     /**
      * * Percent of ave fitness for survival (0.2)
      */
     public static double p_survival_thresh;
     /**
-     * * The power of a linkweight mutation (2.5)
+     * * The power of a linkweight mutation 80%
      */
     public static double p_weight_mut_power;
     // Compatibility Modifier (0.3)
@@ -49,15 +49,15 @@ public class NeatClass {
     /**
      * the probability of adding a new node was 0.03
      */
-    public static double p_mutate_add_node = 0.03;
+    public static double p_mutate_add_node = 0.1;
     /**
      * and the probability of a new link mutation 0.05 - 0.3
      */
-    public static double p_mutate_add_link = 0.1;
+    public static double p_mutate_add_link = 0.3;
     /**
-     * Probability of a mate being outside species 0.001
+     * Probability of a mate being outside species
      */
-    public static double p_interspecies_mate_rate;
+    public static double p_interspecies_mate_rate = 0.001;
     /**
      * training coefficient for back propagandation
      */

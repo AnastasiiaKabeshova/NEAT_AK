@@ -12,6 +12,7 @@ import java.util.List;
  */
 public final class Species extends NeatClass {
     /* list of all organisms in the Species*/
+
     public List<Organism> organisms = new ArrayList<Organism>();
     /* The average fitness of the Species*/
     double ave_fitness;
@@ -22,28 +23,28 @@ public final class Species extends NeatClass {
     /* permanent representative */
     int representativeIndex = 0;
 
-    public Species () {
+    public Species() {
     }
-    
-    public Species (Organism newOrg) {
+
+    public Species(Organism newOrg) {
         addOrganism(newOrg);
     }
-    
+
     /*
      * add an organism to list of organisms in this specie
      */
     public void addOrganism(Organism newOrganism) {
         organisms.add(newOrganism);
     }
-    
-    public int getNumberOrganisms () {
+
+    public int getNumberOrganisms() {
         return organisms.size();
     }
-    
+
     public Organism getOrganism(int index) {
         return organisms.get(index);
     }
-    
+
     public Organism getRepresentOrganism() {
         return organisms.get(representativeIndex);
     }
@@ -107,9 +108,9 @@ public final class Species extends NeatClass {
             if (organisms.get(organism1).getFitness() > organisms.get(organism2).getFitness()) {
                 parent1 = organisms.get(organism1).getGenome().getGenes(); //more fit parent
                 parent2 = organisms.get(organism2).getGenome().getGenes();
-            } else if (organisms.get(organism1).getFitness() > organisms.get(organism2).getFitness()) { //equal fitness
-                parent1 = organisms.get(organism1).getGenome().getGenes();
-                parent2 = organisms.get(organism2).getGenome().getGenes();
+            } else if (organisms.get(organism1).getFitness() < organisms.get(organism2).getFitness()) {
+                parent1 = organisms.get(organism2).getGenome().getGenes();
+                parent2 = organisms.get(organism1).getGenome().getGenes();
             }
             int i = 0, j = 0;
             while (i < organisms.get(organism1).getGenomeSize() && j < organisms.get(organism2).getGenomeSize()) {
@@ -137,9 +138,11 @@ public final class Species extends NeatClass {
 
         // Disabled gen can -> enabled
         for (int i = 0; i < resultList.size(); i++) {
-            double rand = Math.random();
-            if (rand > NeatClass.p_mutate_gene_reenable_prob) {
+            if (Math.random() < NeatClass.p_mutate_gene_reenable_prob) {
                 resultList.get(i).setEnable(true);
+                // it was disable, it was deleted from input and output Nodes
+                // need to be added
+                addInOutLink(resultList.get(i));
             }
         }
 
@@ -148,13 +151,11 @@ public final class Species extends NeatClass {
     }
 
     //TODO второй тип кроссовера!!!!
-    
-
     private void findAverageFitness() {
         //TODO
     }
 
-    private double findMedianFitness() {
+    private void sortByFitness() {
         Collections.sort(organisms, new Comparator<Organism>() {
             @Override
             public int compare(Organism o1, Organism o2) {
@@ -162,6 +163,10 @@ public final class Species extends NeatClass {
                         : o2.getFitness() < o1.getFitness() ? -1 : 0;
             }
         });
+    }
+
+    private double findMedianFitness() {
+        sortByFitness();
         return organisms.get((int) (organisms.size() / 2) + 1).getFitness();
     }
 
@@ -173,33 +178,69 @@ public final class Species extends NeatClass {
 
         int counter = 0;
         List<Integer> parents = new ArrayList<Integer>();
-        while (counter <= nParents) {
+        while (counter < nParents) {
             int Min = 0, Max = N - 1;
             int randomIndex = Min + (int) (Math.random() * ((Max - Min) + 1));
             if (this.organisms.get(randomIndex).getFitness() >= mediane) {
-                parents.add(randomIndex);
-                counter++;
+                if (parents.isEmpty()) {
+                    parents.add(randomIndex);
+                    counter++;
+                } else if (parents.get(parents.size() - 1) != randomIndex) {
+                    parents.add(randomIndex);
+                    counter++;
+                }
+
             }
         }
-        for (int i = 0; i < parents.size(); i++) {
-            Organism offspring = this.makeOffspring(i, i + 1);
-            i++;
+        for (int i = 0; i < parents.size() - 1; i++) {
+            Organism offspring = this.makeOffspring(parents.get(i), parents.get(i + 1));
+            //i++;
             this.organisms.add(offspring);
         }
     }
 
-    public void mutation(Organism organism4mutation) { // before crossover
-        for (int i = 0; i < organism4mutation.getGenomeSize(); i++) {
-            if (Math.random() < NeatClass.p_mutate_add_node) { // p_mutate_add_node < p_mutate_add_link!!!
+    public boolean mutateOrganism(Organism organism4mutation) { // before crossover
+        boolean changed = false;
+        int N =  organism4mutation.getGenomeSize();
+        for (int i = 0; i < N; i++) {
+            double rand = Math.random();
+            if (rand < NeatClass.p_mutate_add_node) { // p_mutate_add_node < p_mutate_add_link!!!
                 organism4mutation.getGenome().mutate_addNode(organism4mutation.getGenome().getGenes().get(i).getInnovation_num());
-            } else if(Math.random() < NeatClass.p_mutate_add_link) {
+                changed = true;
+            } else if (rand < NeatClass.p_mutate_add_link) {
                 // get second random Nodes in Network
-                Node in = organism4mutation.getGenome().getGenes().get(i).getLink().getIn_node();
-                Node out = organism4mutation.getNet().selectRandomNode(in);
-                organism4mutation.getGenome().mutate_addConnection(in, out, true);
+                if (organism4mutation.getNet().getNumberHidden() != 0) {
+                    Node in = organism4mutation.getGenome().getGenes().get(i).getLink().getIn_node();
+                    Node out = organism4mutation.getNet().selectRandomNode(in);
+                    organism4mutation.getGenome().mutate_addConnection(in, out, true);
+                    changed = true;
+                }
             }
         }
         //refresh Network in organism
         organism4mutation.setNet(new Network(organism4mutation.getGenome()));
+        return (changed);
+    }
+
+    public void mutation() {
+        int N = this.getNumberOrganisms();
+        for (int i = 0; i < N; i++) {
+            OrganismFactory fabrica = new OrganismFactory();
+            Organism organism4mutation = fabrica.dublicate(organisms.get(i));
+            boolean changed = mutateOrganism(organism4mutation);
+            if (changed) { // if organism was changed => add in population
+                organisms.add(organism4mutation);
+            }
+        }
+    }
+
+    public void removeOrganism(Organism org) {
+        organisms.remove(org);
+    }
+
+    private void addInOutLink(Gene get) {
+        Link thisLink = get.getLink();
+        get.getLink().getIn_node().addOutgoingLink(thisLink);
+        get.getLink().getOut_node().addIncomingLink(thisLink);
     }
 }

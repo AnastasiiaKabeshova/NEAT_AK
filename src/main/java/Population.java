@@ -1,13 +1,17 @@
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class Population {
 
     /**
      * The organisms in the Population
      */
-    public List<Species> species = new ArrayList<Species>();
+    private List<Species> species = new ArrayList<Species>();
     /**
      * The last generation played
      */
@@ -39,13 +43,13 @@ public final class Population {
      * clusterind gemomes into species
      */
     private void initialSpeciate(List<Organism> organisms) {
-        if (species.isEmpty()) {
+        if (getSpecies().isEmpty()) {
             /**
              * In the first generation, since there are no preexisting species,
              * NEAT begins by creating species 1 and placing the first genome
              * into that species.
              */
-            species.add(new Species(organisms.get(0)));
+            getSpecies().add(new Species(organisms.get(0)));
             organisms.remove(0);
             speciate(organisms);
         }
@@ -56,13 +60,13 @@ public final class Population {
          * A random member of each existing species is chosen as its permanent representative.
          * Genomes are tested one at a time; if a genome’s distance to the representative of any 
          * existing species is less than t, a compatibility threshold, it is placed into this species.*/
-        for (int i = 1; i < organisms.size(); i++) {
+        for (int i = 0; i < organisms.size(); i++) {
             boolean added = false;
-            for (int j = 0; j < species.size(); j++) {
-                double delta = organisms.get(i).countDistanceDelta(species.get(j).getRepresentOrganism());
+            for (int j = 0; j < getSpecies().size(); j++) {
+                double delta = organisms.get(i).countDistanceDelta(getSpecies().get(j).getRepresentOrganism());
                 if (delta < NeatClass.p_compat_threshold) {
-                    species.get(j).addOrganism(organisms.get(i));
-                    j = species.size(); // go out from second for
+                    getSpecies().get(j).addOrganism(organisms.get(i));
+                    j = getSpecies().size(); // go out from second for
                     added = true;
                 }
             }
@@ -71,7 +75,15 @@ public final class Population {
              * new species is created and given a new number.
              */
             if (added == false) {
-                species.add(new Species(organisms.get(i)));
+                getSpecies().add(new Species(organisms.get(i)));
+            }
+        }
+    }
+
+    public void countFitnessAllPop() {
+        for (int i = 0; i < getSpecies().size(); i++) {
+            for (int j = 0; j < getSpecies().get(i).getNumberOrganisms(); j++) {
+                getSpecies().get(i).getOrganism(j).countFitnessOut();
             }
         }
     }
@@ -82,21 +94,23 @@ public final class Population {
      * niche.
      */
     public void explicitFitness() {
-        for (int i = 0; i < species.size(); i++) {
-            for (int j = 0; j < species.get(i).getNumberOrganisms(); j++) {
-                double newFitness = species.get(i).getOrganism(j).getFitness()
-                        / (double) sumSharingFunc(species.get(i).getOrganism(j));
-                species.get(i).getOrganism(j).setFitness(newFitness);
+        for (int i = 0; i < getSpecies().size(); i++) {
+            for (int j = 0; j < getSpecies().get(i).getNumberOrganisms(); j++) {
+                double newFitness = getSpecies().get(i).getOrganism(j).getFitness()
+                        / (double) sumSharingFunc(getSpecies().get(i).getOrganism(j), i, j);
+                getSpecies().get(i).getOrganism(j).setFitness(newFitness);
             }
         }
     }
 
-    private int sumSharingFunc(Organism organism) {
+    private int sumSharingFunc(Organism organism, int speciesI, int organismJ) {
         int sum = 0;
-        for (int i = 0; i < species.size(); i++) {
-            for (int j = 0; j < species.get(i).getNumberOrganisms(); j++) {
-                if (organism.countDistanceDelta(species.get(i).getOrganism(j)) < NeatClass.p_compat_threshold) {
-                    sum += 1;
+        for (int i = 0; i < getSpecies().size(); i++) {
+            for (int j = 0; j < getSpecies().get(i).getNumberOrganisms(); j++) {
+                if (i != speciesI || j != organismJ) {
+                    if (organism.countDistanceDelta(getSpecies().get(i).getOrganism(j)) < NeatClass.p_compat_threshold) {
+                        sum += 1;
+                    }
                 }
             }
 
@@ -104,11 +118,45 @@ public final class Population {
         return sum;
     }
 
+    public int getSpeciesNumber() {
+        return getSpecies().size();
+    }
+
     public void GA() {
+        /* crossover entre les species !!! */
+        // TODO
+
+        /* mutation crossover */
+        for (int i = 0; i < this.getSpeciesNumber(); i++) {
+            species.get(i).mutation();
+            species.get(i).crossover();
+        }
+
+        this.countFitnessAllPop();
+        /* провести селекцию*/
         /**
-         * mutation crossover specification (speciate) провести селекцию на
-         * уровне Популяции
+         * все сложить в одну кучу отсортировать по фитнесу удалить все лишние
          */
+        Map<Integer, Species> typeByOrganism = new HashMap<Integer, Species>();
+        List<Organism> allOrganisms = new ArrayList<Organism>();
+        for (int i = 0; i < species.size(); i++) {
+            for (int j = 0; j < species.get(i).getNumberOrganisms(); j++) {
+                typeByOrganism.put(species.get(i).getOrganism(j).getOrganism_id(), species.get(i));
+                allOrganisms.add(species.get(i).getOrganism(j));
+            }
+        }
+        Collections.sort(allOrganisms, new Comparator<Organism>() {
+            @Override
+            public int compare(Organism o1, Organism o2) {
+                return o2.getFitness() > o1.getFitness() ? 1
+                        : o2.getFitness() < o1.getFitness() ? -1 : 0;
+            }
+        });
+        // … … … … … … … … … … … … … …
+        for (int i = getSize() - 1; i < allOrganisms.size(); i++) {
+            Species type = typeByOrganism.get(allOrganisms.get(i).getOrganism_id());
+            type.removeOrganism(allOrganisms.get(i));
+        }
     }
 
     /**
@@ -124,8 +172,18 @@ public final class Population {
     public void setSize(int size) {
         this.size = size;
     }
-    
-    public int getSpeciesNumber() {
-        return species.size();
+//    public Organism getIJOrganism (int speciesI, int organismJ) {
+//        return (species.get(speciesI).getOrganism(organismJ));
+//    }
+//    
+//    public int getNumberOrganismsInSpecies (int speciesI) {
+//        return (species.get(speciesI).getNumberOrganisms());
+//    }
+
+    /**
+     * @return the species
+     */
+    public List<Species> getSpecies() {
+        return species;
     }
 }

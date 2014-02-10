@@ -5,6 +5,7 @@
  */
 public class Organism{
 
+    private int organism_id;
     /**
      * A measure of fitness for the Organism
      */
@@ -35,17 +36,6 @@ public class Organism{
      */
     Species species;
 
-    public Organism(double xfitness, Genome xgenome, int xgeneration) {
-        fitness = xfitness;
-        orig_fitness = xfitness;
-        genome = xgenome;
-        net = new Network(xgenome);
-        species = null;
-        expected_offspring = 0;
-        generation = xgeneration;
-        error = 0;
-    }
-    
     public Organism() {
         
     }
@@ -56,6 +46,7 @@ public class Organism{
         species = null;
         expected_offspring = 0;
         error = 0;
+        organism_id = genome.getGenome_id();
     }
 
     public Organism(Genome xgenome, Network net) {
@@ -64,6 +55,7 @@ public class Organism{
         species = null;
         expected_offspring = 0;
         error = 0;
+        organism_id = genome.getGenome_id();
     }
 
     public int getLastGeneInovNumber() {
@@ -131,11 +123,12 @@ public class Organism{
 
     public double averageWeigthDiff(Organism org) {
         double W = 0.0;
-        int i = 0, j = 0, count = 0;
+        int i = 0, j = 0; 
+        double count = 0.0;
         while (i < this.getGenomeSize() && j < org.getGenomeSize()) {
             if (this.getGenome().getGenes().get(i).getInnovation_num() == org.getGenome().getGenes().get(j).getInnovation_num()) {
                 W += Math.abs(this.getGenome().getGenes().get(i).getLink().getWeight() - org.getGenome().getGenes().get(j).getLink().getWeight());
-                count++;
+                count+=1.0;
                 i++;
                 j++;
             } else if (this.getGenome().getGenes().get(i).getInnovation_num() < org.getGenome().getGenes().get(j).getInnovation_num()) {
@@ -143,6 +136,9 @@ public class Organism{
             } else {
                 j++;
             }
+        }
+        if (count == 0.0 ) {
+            return 0.0;
         }
         return (W / count);
     }
@@ -153,7 +149,12 @@ public class Organism{
     }
     
     
-    
+   
+    /*
+     * The number of excess and disjoint genes between a pair of genomes is a natural
+     measure of their compatibility distance. The more disjoint two genomes are, the less
+     evolutionary history they share, and thus the less compatible they are.
+     */
     /* the distance between two network encodings can be measured as a linear combination of the number of excess
      (E) and disjoint (D) genes, as well as the average weight differences of matching genes (W) */
     public double countDistanceDelta(Organism organism2) {
@@ -219,6 +220,28 @@ public class Organism{
      */
     public void setNet(Network net) {
         this.net = net;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + this.getOrganism_id();
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Organism) {
+            return this.getOrganism_id() == ((Organism) obj).getOrganism_id();
+        }
+        return false;
+    }
+
+    /**
+     * @return the organism_id
+     */
+    public int getOrganism_id() {
+        return organism_id;
     }
     
 }

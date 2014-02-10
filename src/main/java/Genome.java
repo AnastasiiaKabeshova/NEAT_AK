@@ -75,7 +75,7 @@ public class Genome {
 
         int enableInnovNum1 = OrganismFactory.nextEnabeledInnovetionNumber();
         int enableInnovNum2 = OrganismFactory.nextEnabeledInnovetionNumber();
-        boolean enable = genes.get(linkIndex).isEnable();
+        boolean enable = true; //genes.get(linkIndex).isEnable();
         Gene newGene1 = new Gene(newLink1, enableInnovNum1, enable);
         Gene newGene2 = new Gene(newLink2, enableInnovNum2, enable);
         //two new connections are added to the genome
@@ -91,31 +91,10 @@ public class Genome {
         genes.add(newGene);
     }
 
-    public void mutate_linkWeight(double power, double rate, int mutation_type) {
-    }
-
-    /*
-     * The number of excess and disjoint genes between a pair of genomes is a natural
-     measure of their compatibility distance. The more disjoint two genomes are, the less
-     evolutionary history they share, and thus the less compatible they are.
-     */
-    public double compatibility() {
-        //Set up the counters
-        double num_disjoint = 0.0;
-        double num_excess = 0.0;
-        double mut_diff_total = 0.0;
-        double num_matching = 0.0; //Used to normalize mutation_num differences
-
-
-        double delta = NeatClass.p_disjoint_coeff * (num_disjoint / 1.0)
-                + NeatClass.p_excess_coeff * (num_excess / 1.0)
-                + NeatClass.p_mutdiff_coeff * (mut_diff_total / num_matching);
-        return delta;
-    }
-
 //    public Network genesis(int id) {
 //    }
     private void op_view() {
+        // TODO!!
         System.out.print("\n GENOME START   id=" + genome_id);
         System.out.print("\n  genes are :" + genes.size());
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
