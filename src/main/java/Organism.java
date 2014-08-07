@@ -1,20 +1,22 @@
 
+import java.util.List;
+
 /**
  * Organisms are Genomes and Networks with fitness information i.e. The genotype
  * and phenotype together
  */
-public class Organism{
+public class Organism {
 
     private int organism_id;
     /**
      * A measure of fitness for the Organism
      */
     private double fitness;
-    private double orig_fitness;
+    private double average_fitness = 0.0;
     /**
      * Used just for reporting purposes
      */
-    double error;
+    private double error; // fitness = error
     /**
      * Number of children this Organism may have
      */
@@ -37,7 +39,6 @@ public class Organism{
     Species species;
 
     public Organism() {
-        
     }
 
     public Organism(Genome xgenome) {
@@ -56,6 +57,10 @@ public class Organism{
         expected_offspring = 0;
         error = 0;
         organism_id = genome.getGenome_id();
+    }
+
+    public void setInputData(List<Double> inNodes, List<Double> outNodes) {
+        this.getNet().setInputData(inNodes, outNodes);
     }
 
     public int getLastGeneInovNumber() {
@@ -79,7 +84,6 @@ public class Organism{
         } else {
             counterInnovNumber = organism2.getGenome().getGenes().get(0).getInnovation_num();
         }
-
 
         while (counterInnovNumber < maxNumberShortGenome) {
             counterInnovNumber = organism2.getGenome().getGenes().get(i).getInnovation_num();
@@ -123,12 +127,13 @@ public class Organism{
 
     public double averageWeigthDiff(Organism org) {
         double W = 0.0;
-        int i = 0, j = 0; 
+        int i = 0, j = 0;
         double count = 0.0;
         while (i < this.getGenomeSize() && j < org.getGenomeSize()) {
             if (this.getGenome().getGenes().get(i).getInnovation_num() == org.getGenome().getGenes().get(j).getInnovation_num()) {
-                W += Math.abs(this.getGenome().getGenes().get(i).getLink().getWeight() - org.getGenome().getGenes().get(j).getLink().getWeight());
-                count+=1.0;
+                W += Math.abs(this.getGenome().getGenes().get(i).getLink().getWeight() - 
+                        org.getGenome().getGenes().get(j).getLink().getWeight());
+                count += 1.0;
                 i++;
                 j++;
             } else if (this.getGenome().getGenes().get(i).getInnovation_num() < org.getGenome().getGenes().get(j).getInnovation_num()) {
@@ -137,19 +142,20 @@ public class Organism{
                 j++;
             }
         }
-        if (count == 0.0 ) {
+        if (count == 0.0) {
             return 0.0;
         }
         return (W / count);
     }
 
-    public void countFitnessOut() {
-        getNet().changeOuter();
-       this.setFitness(getNet().getError4Fitness());
+    public void countFitnessOut(int nPatient4averageFitness) throws Exception {
+        this.getNet().changeOuter();
+        this.setError(getNet().getError4Organism());
+        //this.setFitness(getNet().getOut4Organism());
+        this.setFitness(getNet().getError4Organism());
+        this.setAverage_fitness(getFitness(), nPatient4averageFitness);
     }
-    
-    
-   
+
     /*
      * The number of excess and disjoint genes between a pair of genomes is a natural
      measure of their compatibility distance. The more disjoint two genomes are, the less
@@ -171,7 +177,11 @@ public class Organism{
         delta = NeatClass.p_excess_coeff * E / N + NeatClass.p_disjoint_coeff * D / N + NeatClass.p_mutdiff_coeff * W;
         return (delta);
     }
-    
+
+    public void refreshNet() {
+        this.setNet(new Network(this.getGenome()));
+    }
+
     public Genome getGenome() {
         return genome;
     }
@@ -180,18 +190,15 @@ public class Organism{
         this.genome = genome;
     }
 
-    /**
-     * @return the orig_fitness
-     */
-    public double getOrig_fitness() {
-        return orig_fitness;
+    public double getAverage_fitness() {
+        return average_fitness;
     }
 
-    /**
-     * @param orig_fitness the orig_fitness to set
-     */
-    public void setOrig_fitness(double orig_fitness) {
-        this.orig_fitness = orig_fitness;
+    public void setAverage_fitness(double next_fitness, int iteration) {
+        if (iteration == 1) {
+            this.average_fitness = 0.0;
+        }
+        this.average_fitness = ((iteration-1) * average_fitness + next_fitness) / iteration;
     }
 
     /**
@@ -243,5 +250,18 @@ public class Organism{
     public int getOrganism_id() {
         return organism_id;
     }
-    
+
+    /**
+     * @return the error
+     */
+    public double getError() {
+        return error;
+    }
+
+    /**
+     * @param error the error to set
+     */
+    public void setError(double error) {
+        this.error = error;
+    }
 }

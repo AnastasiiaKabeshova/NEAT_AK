@@ -19,82 +19,94 @@ public final class Node extends NeatClass {
     private double potential; // Neuron accumulated power
     private double answer; // only for output layer!!!
     private double misalignment; //невязка сети
-    List<Link> incomingLinks; // All inputs of neuron
-    List<Link> outgoingLinks; // All outs of neuron
+    private final List<Link> incomingLinks = new ArrayList<Link>(); // All inputs of neuron
+    private final List<Link> outgoingLinks = new ArrayList<Link>(); // All outs of neuron
 
     public Node() {
-        incomingLinks = new ArrayList<Link>();
-        outgoingLinks = new ArrayList<Link>();
     }
-    
+
     public Node(NodeType node_type) {
-        incomingLinks = new ArrayList<Link>();
-        outgoingLinks = new ArrayList<Link>();
         type = node_type;
+        this.setNodeID(OrganismFactory.nextEnabledNodeID());
     }
 
     public Node(double newPotential, NodeType node_type) {
         this.setPotential(newPotential);
-        incomingLinks = new ArrayList<Link>();
-        outgoingLinks = new ArrayList<Link>();
         type = node_type;
+        this.setNodeID(OrganismFactory.nextEnabledNodeID());
+    }
+
+    public Node(Node n) {
+        this.setNodeID(n.getNodeID());
+        this.setType(n.getType());
+        this.setPotential(n.getPotential());
+        this.setAnswer(n.getAnswer());
+        this.setMisalignment(n.getMisalignment());
+        this.incomingLinks.addAll(n.getIncomingLinks());
+        this.outgoingLinks.addAll(n.getOutgoingLinks());
     }
 
     public Link getIncomingLink(int index) {
-        return incomingLinks.get(index);
+        return getIncomingLinks().get(index);
     }
-    
+
     public Link getOutgoingLink(int index) {
-        return outgoingLinks.get(index);
+        return getOutgoingLinks().get(index);
     }
 
     public int getIncomingLinksNumber() {
-        return incomingLinks.size();
+        return getIncomingLinks().size();
     }
 
     public int getOutgoingLinksNumber() {
-        return outgoingLinks.size();
+        return getOutgoingLinks().size();
     }
 
     public void addIncomingLink(Link l) {
-        incomingLinks.add(l);
+        getIncomingLinks().add(l);
     }
 
     public void addOutgoingLink(Link l) {
-        outgoingLinks.add(l);
+        getOutgoingLinks().add(l);
     }
-    
-    public void removeIncomingLink (Link l) {
-        Iterator<Link> iter = incomingLinks.iterator();
+
+    public void removeIncomingLink(Link l) {
+        Iterator<Link> iter = getIncomingLinks().iterator();
         while (iter.hasNext()) {
             if (iter.next().getLinkID() == l.getLinkID()) {
                 iter.remove();
             }
-	}
+        }
     }
-    
-    public void removeOutgoingLink (Link l) {
-        Iterator<Link> iter = outgoingLinks.iterator();
+
+    public void removeOutgoingLink(Link l) {
+        Iterator<Link> iter = getOutgoingLinks().iterator();
         while (iter.hasNext()) {
             if (iter.next().getLinkID() == l.getLinkID()) {
                 iter.remove();
             }
-	}
+        }
     }
 
     //modified sigmoidal transfer function
-    public double activationF(double x) {
+    private double activationF(double x) {
         double f = 1 / (1 + Math.exp(-x * NeatClass.p_alpha_activationFunction));
+        return f;
+    }
+
+    //Функция Ферми (экспоненциальная сигмоида):
+    private double activationFfermi(double x) {
+        double f = 1 / (1 + Math.exp(x * (-2) * NeatClass.p_alpha_activationFunction));
         return f;
     }
 
     public void countOut() {
         if (this.type != NodeType.INPUT) {
-            double out = 0;
-            for (int i = 0; i < incomingLinks.size(); i++) {
-                out += incomingLinks.get(i).getWeight() * incomingLinks.get(i).getIn_node().getPotential();
+            double out = 0.0;
+            for (int i = 0; i < getIncomingLinks().size(); i++) {
+                out += getIncomingLinks().get(i).getWeight() * getIncomingLinks().get(i).getIn_node().getPotential();
             }
-            double newPower = activationF(out);  // activation function  
+            double newPower = activationFfermi(out);  // activation function  
             this.setPotential(newPower);
         }
     }
@@ -102,21 +114,40 @@ public final class Node extends NeatClass {
     //simple error (real output - output we wait) 
     // ONLY for output layer
     public double error() {
-        return Math.pow(this.answer - getPotential(), 2);
+        return Math.pow(this.answer - this.getPotential(), 2);
     }
+
     // actual error for neurons on output layer
-
-    public void ajErrorOutputLayer() {
+    public void ajErrorOutputNode() {
         setMisalignment(this.getPotential() * (1 - this.getPotential()) * (this.getAnswer() - this.getPotential()));
-    }
-    // for other layers
 
-    public void ajErrorHiddenLayer() {
+        //Adjustment of synaptic weights on the output layer
+        double lErr = this.getMisalignment();
+        for (int t = 0; t < this.getIncomingLinksNumber(); t++) {
+            double oldWeight = this.getIncomingLink(t).getWeight();
+            double out = this.getIncomingLink(t).getIn_node().getPotential();
+            double newWeight = oldWeight + NeatClass.p_training_coefficient * lErr * out;
+            this.getIncomingLink(t).setWeight(newWeight);
+        }
+
+    }
+
+    // for other layers
+    public void ajErrorHiddenNode() {
         double sumChildren = 0.0;
         for (int t = 0; t < getOutgoingLinksNumber(); t++) { // for all neurons on next layer
-            sumChildren += this.getMisalignment() * this.getOutgoingLink(t).getWeight();
+            sumChildren += this.getOutgoingLink(t).getOut_node().getMisalignment() * this.getOutgoingLink(t).getWeight();
         }
-        this.setMisalignment(getPotential() * (1 - getPotential()) * sumChildren); //для скрытых слоев - по невязке предыдущего слоя
+        this.setMisalignment(this.getPotential() * (1 - this.getPotential()) * sumChildren); //для скрытых слоев - по невязке предыдущего слоя
+
+        //Adjustment of synaptic weights on the layers
+        double lErr = this.getMisalignment();
+        for (int t = 0; t < this.getIncomingLinksNumber(); t++) {
+            double oldWeight = this.getIncomingLink(t).getWeight();
+            double out = this.getIncomingLink(t).getIn_node().getPotential();
+            double newWeight = oldWeight + NeatClass.p_training_coefficient * lErr * out;
+            this.getIncomingLink(t).setWeight(newWeight);
+        }
     }
 
     @Override
@@ -184,5 +215,19 @@ public final class Node extends NeatClass {
      */
     public void setAnswer(double answer) {
         this.answer = answer;
+    }
+
+    /**
+     * @return the incomingLinks
+     */
+    public List<Link> getIncomingLinks() {
+        return incomingLinks;
+    }
+
+    /**
+     * @return the outgoingLinks
+     */
+    public List<Link> getOutgoingLinks() {
+        return outgoingLinks;
     }
 }

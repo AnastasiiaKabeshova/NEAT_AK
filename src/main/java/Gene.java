@@ -13,11 +13,17 @@ public class Gene{
     /*how much mutation has changed the link*/
     private double mutation_num;
 
-    Gene(Link newLink, int innovNum, boolean e) {
+    public Gene(Link newLink, int innovNum, boolean e) {
         link = newLink;
         innovation_num = innovNum;
         enable = e;
         mutation_num = 0;
+    }
+    
+    public Gene(Gene g) {
+        link = new Link(g.getLink().getWeight(), g.getLink());
+        innovation_num = g.getInnovation_num();
+        enable = g.isEnable();
     }
 
     public Link getLink() {

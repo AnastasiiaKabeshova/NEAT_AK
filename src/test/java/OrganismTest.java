@@ -97,7 +97,7 @@ public class OrganismTest {
     }
     
     @Test
-    public void testCountFitness() {
+    public void testCountFitness() throws Exception {
         OrganismFactory fabrica = new OrganismFactory ();
         List<Double> inNodes2 = Arrays.asList(1.0,2.0,3.0);
         List<Double> outNodes = Arrays.asList(1.0);
@@ -106,9 +106,9 @@ public class OrganismTest {
         setWeigth(o2, 1, 0.2);
         setWeigth(o2, 2, 0.3);
         
-        o2.countFitnessOut();
+        o2.countFitnessOut(1);
         double actual = o2.getFitness();
-        Assert.assertEquals("fitness was wrong calculated", 0.0, actual, 0.01);
+        Assert.assertEquals("fitness was wrong calculated", 0.25, actual, 0.01);
     }
 
     private void setWeigth_Potential(Organism o2, int index, double w, double p) {

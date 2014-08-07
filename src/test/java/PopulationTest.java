@@ -2,7 +2,6 @@
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -21,25 +20,25 @@ public class PopulationTest {
     }
     
     @Test
-    public void testExplicitFitness() {
+    public void testExplicitFitness() throws Exception {
         List<Double> inNodes1 = Arrays.asList(1.0,2.0,3.0,4.0,5.0);
         List<Double> outNodes = Arrays.asList(1.0,2.0);
         
         Population testPopulation = new Population(inNodes1, outNodes);
         
-        testPopulation.countFitnessAllPop();
+        testPopulation.countInitialFitnessAllPop();
         testPopulation.explicitFitness();
     }
     
     @Test
-    public void testGA() {
+    public void testGA() throws Exception {
         List<Double> inNodes1 = Arrays.asList(1.0,2.0,3.0,4.0,5.0);
         List<Double> outNodes = Arrays.asList(1.0,2.0);
         NeatClass.p_pop_size = 10;
         
         Population instance = new Population(inNodes1, outNodes);
         NeatClass.p_mutate_add_node = 0.5;
-        instance.GA();
+        instance.GAstep_crossover(); //retest!
         
         Assert.assertEquals("wrong size of Population", NeatClass.p_pop_size, instance.getSize());
     }

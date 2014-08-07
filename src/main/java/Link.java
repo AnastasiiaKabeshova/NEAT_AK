@@ -20,6 +20,21 @@ public class Link {
      */
     private Node out_node;
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Link) {
+            return this.getLinkID() == ((Link) obj).getLinkID();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 89 * hash + this.linkID;
+        return hash;
+    }
+
     public Link(Node nodeIn, Node nodeOut) {
         linkID = OrganismFactory.nextEnabledLinkID();
         weight = Math.random() - 0.5; //random [-0.5; 0.5];
@@ -36,6 +51,13 @@ public class Link {
         out_node = nodeOut;
         nodeOut.addIncomingLink(this);
         nodeIn.addOutgoingLink(this);
+    }
+    
+    public Link(double w, Link l) {
+        linkID = l.getLinkID();
+        weight = w;
+        in_node = new Node(l.getIn_node());
+        out_node = new Node(l.getOut_node());
     }
 
     public double getWeight() {

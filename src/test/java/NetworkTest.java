@@ -2,6 +2,7 @@
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class NetworkTest {
@@ -10,7 +11,7 @@ public class NetworkTest {
     }
 
     @Test
-    public void testAjustmentWeigth() {
+    public void testAjustmentWeigth() throws Exception {
         OrganismFactory fabrica = new OrganismFactory();
         List<Double> inNodes2 = Arrays.asList(1.0, 2.0, 3.0);
         List<Double> outNodes = Arrays.asList(1.0);
@@ -19,7 +20,7 @@ public class NetworkTest {
         setWeigth(o2, 1, 0.2);
         setWeigth(o2, 2, 0.3);
 
-        o2.countFitnessOut();
+        o2.countFitnessOut(1);
         Network net = o2.getNet();
         net.ajustmentWeigth();
         Assert.assertFalse("just for check weight ajustement", false);

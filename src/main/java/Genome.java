@@ -65,7 +65,6 @@ public class Genome {
         Node nodeOut = genes.get(linkIndex).getLink().getOut_node();
 
         Node newNode = new Node(NodeType.HIDDEN);
-        newNode.setNodeID(OrganismFactory.nextEnabledNodeID());
 
         double weight1 = 1;
         double weight2 = genes.get(linkIndex).getLink().getWeight();
@@ -91,8 +90,6 @@ public class Genome {
         genes.add(newGene);
     }
 
-//    public Network genesis(int id) {
-//    }
     private void op_view() {
         // TODO!!
         System.out.print("\n GENOME START   id=" + genome_id);
