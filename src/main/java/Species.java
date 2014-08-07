@@ -49,6 +49,9 @@ public final class Species extends NeatClass {
     }
 
     public Organism getRepresentOrganism() {
+        if (getOrganisms().isEmpty()) {
+            System.err.println(this.toString());
+        }
         return getOrganisms().get(representativeIndex);
     }
 
@@ -300,6 +303,11 @@ public final class Species extends NeatClass {
 
     public void removeOrganism(Organism org) {
         getOrganisms().remove(org);
+        
+        if (getOrganisms().isEmpty()) {
+            System.out.println("Species is empty (afret remove organism)");
+            System.out.println(this.toString());
+        }
     }
 
     private void addInOutLink(Gene get) {

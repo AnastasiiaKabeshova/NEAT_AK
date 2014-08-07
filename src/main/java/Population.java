@@ -216,6 +216,9 @@ public final class Population {
         for (int i = getSize(); i < allOrganisms.size(); i++) {
             Species type = typeByOrganism.get(allOrganisms.get(i).getOrganism_id());
             type.removeOrganism(allOrganisms.get(i));
+            if (type.getOrganisms().isEmpty()) {
+                removeSpecies(type);
+            }
         }
     }
 
@@ -283,6 +286,10 @@ public final class Population {
         for (Iterator<Species> it = species.iterator(); it.hasNext();) {
             it.next().findBestOrganism(); 
         }
+    }
+
+    private void removeSpecies(Species type) {
+        getSpecies().remove(type);
     }
 
 }
