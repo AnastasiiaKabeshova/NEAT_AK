@@ -46,7 +46,7 @@ public class EntryPoint {
 
         //study network
         // for mac
-        neatANN.readInputDataFromExcel("/Users/anastasiiakabeshova/Documents/these_softPartie/database/PCR4_PCPA_test_20.xls", 24);
+        neatANN.readInputDataFromExcel(AppProperties.fileName(), 24);
         // for pc
         //neatANN.readInputDataFromExcel("c:/Users/Administrateur/Desktop/these_softPartie/database/PCR4_PCPA_test_20.xls", 24);
         neatANN.normalization();

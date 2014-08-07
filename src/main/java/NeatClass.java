@@ -95,7 +95,7 @@ public class NeatClass {
     private List< List<Double>> datas = new ArrayList<List<Double>>();
     private final List<Double> answers = new ArrayList<Double>();
     private final List<List<Integer>> samples = new ArrayList<List<Integer>>();
-    Population population = new Population();
+    private Population population = new Population();
 
     //**************************************************************************
     public void readInputDataFromExcel(String excelPath, int answerColNumber) {
@@ -255,7 +255,7 @@ public class NeatClass {
             
             iterationCounter++;
             System.out.println("Iteration - " + iterationCounter);
-        } while (iterationCounter < NeatClass.p_GA_max_iterations);
+        } while (iterationCounter < AppProperties.iterationCount());
 
         return gError;
     }
