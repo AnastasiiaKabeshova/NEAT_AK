@@ -1,8 +1,11 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'application'
 //apply plugin: 'netbeans'
 
-mainClass = 'NEATFrame'
+mainClass = 'EntryPoint'
+//'NEATFrame'
+mainClassName = "EntryPoint"
 
 sourceCompatibility = '1.6'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'

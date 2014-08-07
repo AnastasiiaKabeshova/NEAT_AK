@@ -74,7 +74,7 @@ public class NeatClass {
     /**
      * maximum iterations for GA step
      */
-    public static int p_GA_max_iterations = 100;
+    public static int p_GA_max_iterations = 5;
 
     //**************************************************************************
     /**
@@ -254,7 +254,7 @@ public class NeatClass {
             population.nextGenerationNumber();
             
             iterationCounter++;
-
+            System.out.println("Iteration - " + iterationCounter);
         } while (iterationCounter < NeatClass.p_GA_max_iterations);
 
         return gError;
