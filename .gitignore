@@ -215,3 +215,8 @@ pip-log.txt
 .mr.developer.cfg
 /NEAT_AK/nbproject/private/
 /.nb-gradle/private/
+
+*.bin
+*.jpeg
+*.class
+*.lock
