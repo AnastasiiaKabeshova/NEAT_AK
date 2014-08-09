@@ -18,8 +18,9 @@ import java.util.logging.Logger;
 public class AppProperties {
 
     static Properties prop = new Properties();
+    static Properties local = new Properties();
 
-    {
+    static {
         FileInputStream f = null;
         try {
             f = new FileInputStream("application.properties");
@@ -35,13 +36,39 @@ public class AppProperties {
                 Logger.getLogger(AppProperties.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        try {
+            f = new FileInputStream("local.properties");
+            local.load(f);
+        } catch (FileNotFoundException ex) {
+            System.out.println("Cannot find local properties");
+        } catch (IOException ex) {
+            System.out.println("Cannot find local properties");
+        } finally {
+            try {
+                f.close();
+            } catch (IOException ex) {
+                Logger.getLogger(AppProperties.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }        
     }
     
     public static String fileName(){
-        return prop.getProperty("input.filename");
+        return getProperty("input.filename");
     }
     
     public static int iterationCount(){
-        return Integer.parseInt(prop.getProperty("iterationCount", "100"));
+        return Integer.parseInt(getProperty("iterationCount", "100"));
+    }
+    
+    private static String getProperty(String propName) {
+        return getProperty(propName, null);
+    }
+
+    private static String getProperty(String propName, String defValue) {
+        if(local.containsKey(propName)){
+            return local.getProperty(propName);
+        } else {
+            return prop.getProperty(propName, defValue);
+        }
     }
 }
