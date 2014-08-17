@@ -86,7 +86,7 @@ public class NeatClass {
     /**
      * training coefficient for back propagandation
      */
-    public static double p_training_coefficient= 0.15;
+    public static double p_training_coefficient = 0.15;
     /**
      * iterations limit
      */
@@ -167,18 +167,21 @@ public class NeatClass {
         population.initialPopulation(datas, answers);
     }
 
-    public List< List<Double>> backPropagation() throws Exception {
-        List< List<Double>> gError = new ArrayList< List<Double>>();
-        //for 3 sambples
-        gError.add(new ArrayList<Double>());
-        gError.add(new ArrayList<Double>());
-        gError.add(new ArrayList<Double>());
+    /**
+     * @return backPropagandation, return error for the best organisms in
+     * Generation
+     */
+    public List< List<Double>> backPropagation(List<Organism> chromosomes) throws Exception {
+        List< List<Double>> bestOrgan = new ArrayList< List<Double>>();
+        //for 3 samples
+        bestOrgan.add(new ArrayList<Double>());
+        bestOrgan.add(new ArrayList<Double>());
+        bestOrgan.add(new ArrayList<Double>());
 
-        List< List<Double>> curErrorCurPatient = new ArrayList< List<Double>>();
-        //for 3 sambples
-        curErrorCurPatient.add(new ArrayList<Double>());
-        curErrorCurPatient.add(new ArrayList<Double>());
-        curErrorCurPatient.add(new ArrayList<Double>());
+        List< List<Double>> curErrorBestOrgan = new ArrayList< List<Double>>();
+        curErrorBestOrgan.add(new ArrayList<Double>());
+        curErrorBestOrgan.add(new ArrayList<Double>());
+        curErrorBestOrgan.add(new ArrayList<Double>());
 
         /**
          * Прогонять выборку надо несколько эпох. Чем больше номер генерации ГА,
@@ -188,103 +191,88 @@ public class NeatClass {
         if (numIterations > NeatClass.p_BP_max_iterations) {
             numIterations = NeatClass.p_BP_max_iterations;
         }
-        for (int e = 0; e < numIterations; e++) {
-            //take sous - Datas
-            for (int i = 0; i < samples.size(); i++) {
-                int counter = 0;
-                for (int j = 0; j < samples.get(i).size(); j++) {
-                    counter++;
-                    // for every organism in population
-                    for (int s = 0; s < population.getSpeciesNumber(); s++) {
-                        for (Organism organ : population.getSpecies().get(s).getOrganisms()) {
 
-                            //count fitness and error for every data line
-                            List<Double> outNodes = new ArrayList<Double>();
-                            outNodes.add(answers.get(samples.get(i).get(j)));
-                            organ.setInputData(datas.get(samples.get(i).get(j)), outNodes);
-                            organ.countFitnessOut(counter);
+        // for every organism in population (at the begining)
+        // and for every chromosome on the next steps
+        for (Organism organ : chromosomes) {
+            for (int e = 0; e < numIterations; e++) {
+                //take sous - Datas
+                for (int i = 0; i < samples.size(); i++) {
+                    int counter = 0;
+                    for (int j = 0; j < samples.get(i).size(); j++) {
+                        counter++;
 
-                            //change weigths
-                            organ.getNet().ajustmentWeigth();
-                        }
+                        //count fitness and error for every data line
+                        List<Double> outNodes = new ArrayList<Double>();
+                        outNodes.add(answers.get(samples.get(i).get(j)));
+                        organ.setInputData(datas.get(samples.get(i).get(j)), outNodes);
+                        organ.countFitnessOut(counter);
+
+                        //change weigths
+                        organ.getNet().ajustmentWeigth();
                     }
-                    curErrorCurPatient.get(i).add(population.getAllOrganAverageFitness());
+                    curErrorBestOrgan.get(i).add(organ.getFitness());
                 }
             }
-            
-            /**
-             * find best organism in the species
-             */
-            population.bestOrganisms();
-            
-            //count average in curErrorCurPatient for total gError
-            for (int c = 0; c < curErrorCurPatient.size(); c++) {
-                double sum = 0.0;
-                for (int j = 0; j < curErrorCurPatient.get(c).size(); j++) {
-                    sum += curErrorCurPatient.get(c).get(j);
-                }
-                gError.get(c).add(sum / curErrorCurPatient.get(c).size());
-                curErrorCurPatient.get(c).clear();
+            if (bestOrgan.get(0).isEmpty()) { bestOrgan = curErrorBestOrgan; }
+            if (curErrorBestOrgan.get(0).get(curErrorBestOrgan.get(0).size() - 1) < bestOrgan.get(0).get(bestOrgan.get(0).size() - 1)) {
+                bestOrgan = curErrorBestOrgan;
             }
         }
+        
+        /**
+         * find best organism in population
+         */
+        population.setBestOrganism();
 
-        return gError;
+        return bestOrgan;
     }
 
-    public List< List<Double>> NEATalgorithm() throws Exception {
+    public List<GraphDate> NEATalgorithm() throws Exception {
         int iterationCounter = 0;
-        List< List<Double>> gError = new ArrayList< List<Double>>();
-        gError.add(new ArrayList<Double>());
-        gError.add(new ArrayList<Double>());
-        gError.add(new ArrayList<Double>());
+        
+        List<GraphDate> fGraphs = new ArrayList<GraphDate>();
 
+        // create list of all organisms
+        List<Organism> allOrg = new ArrayList<Organism>();
+        for (int i = 0; i < population.getSpeciesNumber(); i++) {
+                allOrg.addAll(population.getSpecies().get(i).getOrganisms());
+        }
         //count Errors with initial population (in -> out)
-        countBP_StepError_last(gError);
-      
+        fGraphs.add(countBP_dataGraph(allOrg));
+
         do {
             //genetic algorithm step
-            population.GAstep_mutation();
-            countBP_StepError_last(gError);
+            List<Organism> mutatedOrg = new ArrayList<Organism>();
+            mutatedOrg = population.GAstep_mutation();
+            fGraphs.add(countBP_dataGraph(mutatedOrg));
             population.GAstep_selection();
             population.nextGenerationNumber();
 
+            List<Organism> childOrg = new ArrayList<Organism>();
             population.GAstep_crossover();
-            countBP_StepError_last(gError);
+            fGraphs.add(countBP_dataGraph(childOrg));
             population.GAstep_selection();
             population.nextGenerationNumber();
-            
+
             iterationCounter++;
             System.out.println("Iteration - " + iterationCounter);
         } while (iterationCounter < AppProperties.iterationCount());
-
-        return gError;
+        
+        return fGraphs;
     }
-    
+
     /**
-     * @param gError
-     * @throws Exception 
-     * count average error throw iterations
+     * @param gError count error of last network(organism) in generation throw
+     * iterations
      */
-    private void countBP_StepError_average(List<List<Double>> gError) throws Exception {
+    private GraphDate countBP_dataGraph(List<Organism> org) throws Exception {
         List< List<Double>> localError = new ArrayList<List<Double>>();
-        localError = backPropagation();
+        localError = backPropagation(org);
 
-        for (int i = 0; i < localError.size(); i++) {
-            double sum = 0.0;
-            for (int j = 0; j < localError.get(i).size(); j++) {
-                sum += localError.get(i).get(j);
-            }
-            gError.get(i).add(sum / localError.get(i).size());
-        }
-    }
-    
-    private void countBP_StepError_last(List<List<Double>> gError) throws Exception {
-        List< List<Double>> localError = new ArrayList<List<Double>>();
-        localError = backPropagation();
-
-        for (int i = 0; i < localError.size(); i++) {
-            gError.get(i).add(localError.get(i).get(localError.get(i).size()-1));
-        }
+        //for graph graph
+        GraphDate gData = new GraphDate(localError);
+        return gData;
     }
 
     public int getNumberCharacteristics() {

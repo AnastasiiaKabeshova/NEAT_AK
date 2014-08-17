@@ -25,6 +25,10 @@ public final class Population {
      * last generation number
      */
     private int generationNumber = 1;
+    /**
+     * number of best organism
+     */
+    private int bestOrganism;
 
     public Population() {
     }
@@ -161,7 +165,7 @@ public final class Population {
         return getSpecies().size();
     }
 
-    public void GAstep_crossover() throws Exception {
+    public List<Organism> GAstep_crossover() throws Exception {
         // TODO
         /* crossover entre les species !!! */
 
@@ -178,9 +182,10 @@ public final class Population {
          * speciate
          */
         speciate(childList);
+        return childList;
     }
 
-    public void GAstep_mutation() throws Exception {
+    public List<Organism> GAstep_mutation() throws Exception {
         /* mutation  */
         List<Organism> mutatedOrganisms = new ArrayList<Organism>();
         for (int i = 0; i < this.getSpeciesNumber(); i++) {
@@ -190,6 +195,7 @@ public final class Population {
          * speciate
          */
         speciate(mutatedOrganisms);
+        return mutatedOrganisms;
     }
 
     public void GAstep_selection() {
@@ -239,8 +245,11 @@ public final class Population {
                 averF += organ.getFitness();
             }
         }
-
         return averF / getSize();
+    }
+    
+    public double getBestOrganFitness() {
+        return getOrganismByID(getBestOrganism()).getFitness();
     }
 
     /**
@@ -290,6 +299,46 @@ public final class Population {
 
     private void removeSpecies(Species type) {
         getSpecies().remove(type);
+    }
+
+    /**
+     * @return the bestOrganism
+     */
+    public int getBestOrganism() {
+        return bestOrganism;
+    }
+
+    /**
+     * bestOrganism to set
+     * best Organism = error minimal
+     */
+    public void setBestOrganism() {
+        int bestOrganismNumberByFitness = getSpecies().get(0).getOrganism(0).getOrganism_id();
+        double bestOrganismFitness = getSpecies().get(0).getOrganism(0).getError();
+         for (int i = 0; i < getSpecies().size(); i++) {
+            for (int j = 0; j < getSpecies().get(i).getNumberOrganisms(); j++) {
+                if (getSpecies().get(i).getOrganism(j).getError() < bestOrganismFitness) {
+                    bestOrganismFitness = getSpecies().get(i).getOrganism(j).getError();
+                    bestOrganismNumberByFitness = getSpecies().get(i).getOrganism(j).getOrganism_id();
+                }
+            }
+        }
+        this.bestOrganism = bestOrganismNumberByFitness;
+    }
+    
+    /**
+     * @param id
+     * @return the Organism by Organism_id
+     */
+    public Organism getOrganismByID(int id) {
+        for (int i = 0; i < getSpecies().size(); i++) {
+            for (int j = 0; j < getSpecies().get(i).getNumberOrganisms(); j++) {
+                if (getSpecies().get(i).getOrganism(j).getOrganism_id() == id) {
+                   return getSpecies().get(i).getOrganism(j);
+                }
+            }
+        }
+        return null;
     }
 
 }

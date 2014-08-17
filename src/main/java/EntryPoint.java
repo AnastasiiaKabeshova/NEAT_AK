@@ -56,8 +56,9 @@ public class EntryPoint {
 
         //NeatClass.p_GA_max_iterations = 30;
 
-        List< List<Double>> gError = neatANN.NEATalgorithm();
+        List< GraphDate> dataToPrint = neatANN.NEATalgorithm();
 
+        /*
         for (int i = 0; i < gError.get(0).size(); i++) {
             series1.add(i + 1, gError.get(0).get(i));
         }
@@ -66,7 +67,7 @@ public class EntryPoint {
         }
         for (int i = 0; i < gError.get(2).size(); i++) {
             series3.add(i + 1, gError.get(2).get(i));
-        }
+        }*/
 
         return dataset;
     }
