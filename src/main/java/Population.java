@@ -291,12 +291,6 @@ public final class Population {
         return generationNumber++;
     }
 
-    void bestOrganisms() {
-        for (Iterator<Species> it = species.iterator(); it.hasNext();) {
-            it.next().findBestOrganism(); 
-        }
-    }
-
     private void removeSpecies(Species type) {
         getSpecies().remove(type);
     }
