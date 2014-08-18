@@ -2,7 +2,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -319,16 +318,6 @@ public final class Species extends NeatClass {
     public void changeWeigthBP() {
         for (int i = 0; i < getOrganisms().size(); i++) {
             getOrganisms().get(i).getNet().ajustmentWeigth();
-        }
-    }
-
-    
-    void findBestOrganism() {
-        max_fitness_organism = 0;
-        for (int i = 0; i < getNumberOrganisms(); i++){ 
-            if(getOrganism(i).getFitness() < getOrganism(max_fitness_organism).getFitness()) {
-                max_fitness_organism = i;
-            }
         }
     }
     

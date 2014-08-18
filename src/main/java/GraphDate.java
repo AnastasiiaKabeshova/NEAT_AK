@@ -12,4 +12,12 @@ public class GraphDate {
     public GraphDate(List<List<Double>> xerrors) {
         errors = xerrors;
     }
+    
+    public double getData(int sample, int i) {
+        return errors.get(sample).get(i);
+    }
+    
+    public int getSize() {
+        return errors.get(0).size();
+    }
 }

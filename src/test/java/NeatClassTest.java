@@ -44,7 +44,7 @@ public class NeatClassTest {
         instance.makeThreeSamplesRandomized();
         instance.buildPopulation();
         NeatClass.p_BP_max_iterations = 20;
-        errors = instance.backPropagation();
+        //errors = instance.backPropagation();
         
     }
 }

@@ -198,20 +198,19 @@ public class NeatClass {
             for (int e = 0; e < numIterations; e++) {
                 //take sous - Datas
                 for (int i = 0; i < samples.size(); i++) {
-                    int counter = 0;
+                    double curErr = 0;
                     for (int j = 0; j < samples.get(i).size(); j++) {
-                        counter++;
-
                         //count fitness and error for every data line
                         List<Double> outNodes = new ArrayList<Double>();
                         outNodes.add(answers.get(samples.get(i).get(j)));
                         organ.setInputData(datas.get(samples.get(i).get(j)), outNodes);
-                        organ.countFitnessOut(counter);
-
+                        organ.countFitnessOut(j+1);
                         //change weigths
                         organ.getNet().ajustmentWeigth();
+                        curErr += organ.getFitness();
                     }
-                    curErrorBestOrgan.get(i).add(organ.getFitness());
+                    //error = avarege for all patients in this sample
+                    curErrorBestOrgan.get(i).add(curErr/samples.get(i).size());
                 }
             }
             if (bestOrgan.get(0).isEmpty()) { bestOrgan = curErrorBestOrgan; }

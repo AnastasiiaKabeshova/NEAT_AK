@@ -60,6 +60,10 @@ public class AppProperties {
         return Integer.parseInt(getProperty("iterationCount", "100"));
     }
     
+    public static int answerColNumber() {
+        return Integer.parseInt(getProperty("colon.number.answer","100"));
+    }
+    
     private static String getProperty(String propName) {
         return getProperty(propName, null);
     }
