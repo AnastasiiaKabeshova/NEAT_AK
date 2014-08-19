@@ -65,7 +65,7 @@ public class NeatClass {
     /**
      * threshold of error for stop-criterion of GA
      */
-    public static double p_GAerror_threshold = 0.1;
+    public static double p_GAerror_threshold = 0.01;
     /**
      * coeffisient of multiplication of epoch number depends on generation
      * number
@@ -244,18 +244,28 @@ public class NeatClass {
             //genetic algorithm step
             List<Organism> mutatedOrg = new ArrayList<Organism>();
             mutatedOrg = population.GAstep_mutation();
-            fGraphs.add(countBP_dataGraph(mutatedOrg));
+            if(!mutatedOrg.isEmpty()) {fGraphs.add(countBP_dataGraph(mutatedOrg));}
             population.GAstep_selection();
             population.nextGenerationNumber();
 
             List<Organism> childOrg = new ArrayList<Organism>();
             population.GAstep_crossover();
-            fGraphs.add(countBP_dataGraph(childOrg));
+            if(!childOrg.isEmpty()) {fGraphs.add(countBP_dataGraph(childOrg));}
             population.GAstep_selection();
             population.nextGenerationNumber();
 
             iterationCounter++;
-            System.out.println("Iteration - " + iterationCounter);
+            System.out.println("Iteration: " + iterationCounter);
+            
+            System.out.println("Number of species in population: " + population.getSpeciesNumber());
+            
+            /*stop criteria : Критерий окончания работы ГА - 
+            ошибка обобщения для лучшей сети (хромосомы в популяции) 
+            станет меньше, чем некоторый уровень. */
+            if (population.getBestOrganFitness() < p_GAerror_threshold) {
+                break;
+            }
+            
         } while (iterationCounter < AppProperties.iterationCount());
         
         return fGraphs;
@@ -270,7 +280,8 @@ public class NeatClass {
         localError = backPropagation(org);
 
         //for graph graph
-        GraphDate gData = new GraphDate(localError);
+        int numIterations = population.getGenerationNumber() * NeatClass.p_coef_multipl_epoch;
+        GraphDate gData = new GraphDate(localError, numIterations);
         return gData;
     }
 

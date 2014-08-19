@@ -305,7 +305,7 @@ public final class Species extends NeatClass {
         
         if (getOrganisms().isEmpty()) {
             System.out.println("Species is empty (afret remove organism)");
-            System.out.println(this.toString());
+            //System.out.println(this.toString());
         }
     }
 

@@ -8,9 +8,11 @@ public class GraphDate {
      * list errors for best organism in current generation
      */
     private List<List<Double>> errors = new ArrayList<List<Double>>();
+    private final int numberIterations;
     
-    public GraphDate(List<List<Double>> xerrors) {
+    public GraphDate(List<List<Double>> xerrors, int iter) {
         errors = xerrors;
+        numberIterations = iter;
     }
     
     public double getData(int sample, int i) {
@@ -19,5 +21,9 @@ public class GraphDate {
     
     public int getSize() {
         return errors.get(0).size();
+    }
+
+    Object getNiterations() {
+        return numberIterations;
     }
 }

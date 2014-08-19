@@ -1,4 +1,5 @@
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
@@ -8,10 +9,13 @@ import java.util.logging.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.ValueMarker;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.TextAnchor;
 
 /**
  *
@@ -26,15 +30,14 @@ public class EntryPoint {
      */
     public static void main(String[] args) {
         try {
-            final XYDataset dataset = studyDatasetBaseLyon();
-            final JFreeChart chart = createSimpleChart(dataset);
-            ChartUtilities.saveChartAsJPEG(new File("chartImage.jpeg"), chart, 800, 600);
+            studyDatasetBaseLyon();
+
         } catch (Exception ex) {
             Logger.getLogger(EntryPoint.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private static XYDataset studyDatasetBaseLyon() throws IOException, Exception {
+    private static void studyDatasetBaseLyon() throws IOException, Exception {
         //study network
         // for mac
         neatANN.readInputDataFromExcel(AppProperties.fileName(), AppProperties.answerColNumber());
@@ -48,18 +51,18 @@ public class EntryPoint {
         //NeatClass.p_GA_max_iterations = 30;
         List< GraphDate> dataToPrint = neatANN.NEATalgorithm();
 
-        // create images
-        final XYSeries series1 = new XYSeries("Training error");
-        final XYSeries series2 = new XYSeries("Testing error");
-        final XYSeries series3 = new XYSeries("Validation error");
-
-        final XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries(series1);
-        dataset.addSeries(series2);
-        dataset.addSeries(series3);
-
         int counter = 0;
         for (Iterator<GraphDate> data = dataToPrint.iterator(); data.hasNext();) {
+            // create images
+            XYSeries series1 = new XYSeries("Training error");
+            XYSeries series2 = new XYSeries("Testing error");
+            XYSeries series3 = new XYSeries("Validation error");
+
+            XYSeriesCollection dataset = new XYSeriesCollection();
+            dataset.addSeries(series1);
+            dataset.addSeries(series2);
+            dataset.addSeries(series3);
+
             GraphDate graphDate = data.next();
             for (int i = 0; i < graphDate.getSize(); i++) { //graphDate.getSize() = number iterations
                 series1.add(i + 1, graphDate.getData(0, i));
@@ -68,15 +71,13 @@ public class EntryPoint {
             }
             counter++;
             final JFreeChart chart = createSimpleChart(dataset);
-            ChartUtilities.saveChartAsJPEG(new File("chartImage"+counter+".jpeg"), chart, 800, 600);
-            
-            //clear for next graph
-            series1.clear();
-            series1.clear();
-            series1.clear();
+            /*final Marker iteration = new ValueMarker(175.0);
+            iteration.setPaint(Color.darkGray);
+            iteration.setLabel(String.valueOf(graphDate.getNiterations()));
+            iteration.setLabelTextAnchor(TextAnchor.TOP_CENTER);*/
+            ChartUtilities.saveChartAsJPEG(new File("chartImage" + counter + ".jpeg"), chart, 800, 600);
         }
 
-        return dataset;
     }
 
     private static JFreeChart createSimpleChart(final XYDataset dataset) {

@@ -27,7 +27,7 @@ public final class Population {
     /**
      * number of best organism
      */
-    private int bestOrganism;
+    private Organism bestOrganism;
 
     public Population() {
     }
@@ -101,13 +101,13 @@ public final class Population {
             boolean added = false;
             for (int j = 0; j < getSpecies().size(); j++) {
                 double delta = organisms.get(i).countDistanceDelta(getSpecies().get(j).getRepresentOrganism());
-                
                 //write delta to file
                 if(getSpecies().size()>1) {toFile.appendToFile(true, delta);}
                 
-                if (delta < NeatClass.p_compat_threshold) {
+                if (delta < AppProperties.compatThreshold()) {
                     getSpecies().get(j).addOrganism(organisms.get(i));
-                    j = getSpecies().size(); // go out from second for
+                    j = getSpecies().size(); 
+                    // go out from second for
                     added = true;
                 }
             }
@@ -180,7 +180,7 @@ public final class Population {
         /**
          * speciate
          */
-        speciate(childList);
+        if(!childList.isEmpty()) speciate(childList);
         return childList;
     }
 
@@ -221,13 +221,18 @@ public final class Population {
         for (int i = getSize(); i < allOrganisms.size(); i++) {
             Species type = typeByOrganism.get(allOrganisms.get(i).getOrganism_id());
             type.removeOrganism(allOrganisms.get(i));
+            //if Species is empty, delete it
             if (type.getOrganisms().isEmpty()) {
                 removeSpecies(type);
             }
         }
     }
 
-    public double getError() {
+    /**
+     * ger avarage error of all organisms
+     * @return 
+     */
+    public double getAverageError() {
         double error = 0.0;
         for (int i = 0; i < species.size(); i++) {
             for (int j = 0; j < species.get(i).getNumberOrganisms(); j++) {
@@ -236,19 +241,9 @@ public final class Population {
         }
         return (error / this.getSize());
     }
-
-    public double getAllOrganAverageFitness() {
-        double averF = 0.0;
-        for (int i = 0; i < getSpeciesNumber(); i++) {
-            for (Organism organ : getSpecies().get(i).getOrganisms()) {
-                averF += organ.getFitness();
-            }
-        }
-        return averF / getSize();
-    }
     
     public double getBestOrganFitness() {
-        return getOrganismByID(getBestOrganism()).getFitness();
+        return bestOrganism.getFitness();
     }
 
     /**
@@ -297,7 +292,7 @@ public final class Population {
     /**
      * @return the bestOrganism
      */
-    public int getBestOrganism() {
+    public Organism getBestOrganism() {
         return bestOrganism;
     }
 
@@ -306,17 +301,14 @@ public final class Population {
      * best Organism = error minimal
      */
     public void setBestOrganism() {
-        int bestOrganismNumberByFitness = getSpecies().get(0).getOrganism(0).getOrganism_id();
-        double bestOrganismFitness = getSpecies().get(0).getOrganism(0).getError();
+        this.bestOrganism = getSpecies().get(0).getOrganism(0);
          for (int i = 0; i < getSpecies().size(); i++) {
             for (int j = 0; j < getSpecies().get(i).getNumberOrganisms(); j++) {
-                if (getSpecies().get(i).getOrganism(j).getError() < bestOrganismFitness) {
-                    bestOrganismFitness = getSpecies().get(i).getOrganism(j).getError();
-                    bestOrganismNumberByFitness = getSpecies().get(i).getOrganism(j).getOrganism_id();
+                if (getSpecies().get(i).getOrganism(j).getError() < bestOrganism.getError()) {
+                     this.bestOrganism = getSpecies().get(i).getOrganism(j);
                 }
             }
         }
-        this.bestOrganism = bestOrganismNumberByFitness;
     }
     
     /**
