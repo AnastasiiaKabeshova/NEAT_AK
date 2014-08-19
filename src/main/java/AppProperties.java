@@ -64,6 +64,14 @@ public class AppProperties {
         return Integer.parseInt(getProperty("colon.number.answer","100"));
     }
     
+    public static double compatThreshold () {
+        return Double.parseDouble(getProperty("compat.threshold", "2.00"));
+    }
+    
+    public static int populationSize() {
+        return Integer.parseInt(getProperty("pop.size","50"));
+    }
+    
     private static String getProperty(String propName) {
         return getProperty(propName, null);
     }
