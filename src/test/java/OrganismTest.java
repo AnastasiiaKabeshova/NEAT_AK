@@ -107,7 +107,7 @@ public class OrganismTest {
         setWeigth(o2, 2, 0.3);
         
         o2.countFitnessOut(1);
-        double actual = o2.getFitness();
+        double actual = o2.getError();
         Assert.assertEquals("fitness was wrong calculated", 0.25, actual, 0.01);
     }
 

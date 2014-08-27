@@ -101,8 +101,8 @@ public final class Population {
             boolean added = false;
             for (int j = 0; j < getSpecies().size(); j++) {
                 double delta = organisms.get(i).countDistanceDelta(getSpecies().get(j).getRepresentOrganism());
-                //write delta to file
-                if(getSpecies().size()>1) {toFile.appendToFile(true, delta);}
+                //write delta to file               
+                    toFile.appendToFile(true, delta);
                 
                 if (delta < AppProperties.compatThreshold()) {
                     getSpecies().get(j).addOrganism(organisms.get(i));
@@ -193,7 +193,7 @@ public final class Population {
         /**
          * speciate
          */
-        speciate(mutatedOrganisms);
+        if(!mutatedOrganisms.isEmpty()) speciate(mutatedOrganisms);
         return mutatedOrganisms;
     }
 
@@ -213,7 +213,7 @@ public final class Population {
         Collections.sort(allOrganisms, new Comparator<Organism>() {
             @Override
             public int compare(Organism o1, Organism o2) {
-                return o2.getFitness() > o1.getFitness() ? 1
+                return o2.getFitness()> o1.getFitness() ? 1
                         : o2.getFitness() < o1.getFitness() ? -1 : 0;
             }
         });
@@ -226,20 +226,6 @@ public final class Population {
                 removeSpecies(type);
             }
         }
-    }
-
-    /**
-     * ger avarage error of all organisms
-     * @return 
-     */
-    public double getAverageError() {
-        double error = 0.0;
-        for (int i = 0; i < species.size(); i++) {
-            for (int j = 0; j < species.get(i).getNumberOrganisms(); j++) {
-                error += species.get(i).getOrganism(j).getError();
-            }
-        }
-        return (error / this.getSize());
     }
     
     public double getBestOrganFitness() {
@@ -304,7 +290,7 @@ public final class Population {
         this.bestOrganism = getSpecies().get(0).getOrganism(0);
          for (int i = 0; i < getSpecies().size(); i++) {
             for (int j = 0; j < getSpecies().get(i).getNumberOrganisms(); j++) {
-                if (getSpecies().get(i).getOrganism(j).getError() < bestOrganism.getError()) {
+                if (getSpecies().get(i).getOrganism(j).getFitness()< bestOrganism.getFitness()) {
                      this.bestOrganism = getSpecies().get(i).getOrganism(j);
                 }
             }

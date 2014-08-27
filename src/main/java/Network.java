@@ -96,6 +96,10 @@ public class Network {
         }
     }
 
+    /**
+     * the error function (summed squared error)
+     * @return 
+     */
     public double getError4Organism() {
         double error = 0.0;
         for (int i = 0; i < outNodes.size(); i++) {

@@ -204,10 +204,11 @@ public class NeatClass {
                         List<Double> outNodes = new ArrayList<Double>();
                         outNodes.add(answers.get(samples.get(i).get(j)));
                         organ.setInputData(datas.get(samples.get(i).get(j)), outNodes);
-                        organ.countFitnessOut(j+1);
+                        // count fitness only for testing sample
+                        if (i == 1) { organ.countFitnessOut(j+1);} 
                         //change weigths
                         organ.getNet().ajustmentWeigth();
-                        curErr += organ.getFitness();
+                        curErr += organ.getError();
                     }
                     //error = avarege for all patients in this sample
                     curErrorBestOrgan.get(i).add(curErr/samples.get(i).size());
@@ -262,7 +263,12 @@ public class NeatClass {
             /*stop criteria : Критерий окончания работы ГА - 
             ошибка обобщения для лучшей сети (хромосомы в популяции) 
             станет меньше, чем некоторый уровень. */
-            if (population.getBestOrganFitness() < p_GAerror_threshold) {
+            /*if (population.getBestOrganFitness() < p_GAerror_threshold) {
+                break;
+            }*/
+            int size = fGraphs.size()-1;
+            int last = fGraphs.get(size).getSize_inSample() - 1;
+            if(fGraphs.get(size).getData(0,last) < p_GAerror_threshold & fGraphs.get(size).getData(2,last) < p_GAerror_threshold & fGraphs.get(size).getData(0,last) < p_GAerror_threshold) {
                 break;
             }
             

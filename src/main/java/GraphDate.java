@@ -19,7 +19,7 @@ public class GraphDate {
         return errors.get(sample).get(i);
     }
     
-    public int getSize() {
+    public int getSize_inSample() {
         return errors.get(0).size();
     }
 

@@ -112,7 +112,7 @@ public final class Species extends NeatClass {
          * not equally fitted parents
          */
         else {
-            if (getOrganisms().get(organism1).getFitness() > getOrganisms().get(organism2).getFitness()) {
+            if (getOrganisms().get(organism1).getFitness()> getOrganisms().get(organism2).getFitness()) {
                 parent1 = getOrganisms().get(organism1).getGenome().getGenes(); //more fit parent
                 parent2 = getOrganisms().get(organism2).getGenome().getGenes();
             } else if (getOrganisms().get(organism1).getFitness() < getOrganisms().get(organism2).getFitness()) {
@@ -304,7 +304,7 @@ public final class Species extends NeatClass {
         getOrganisms().remove(org);
         
         if (getOrganisms().isEmpty()) {
-            System.out.println("Species is empty (afret remove organism)");
+            System.out.println("Species is empty (after remove organism)");
             //System.out.println(this.toString());
         }
     }

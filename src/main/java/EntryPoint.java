@@ -60,7 +60,7 @@ public class EntryPoint {
             dataset.addSeries(series3);
 
             GraphDate graphDate = data.next();
-            for (int i = 0; i < graphDate.getSize(); i++) { //graphDate.getSize() = number iterations
+            for (int i = 0; i < graphDate.getSize_inSample(); i++) { //graphDate.getSize() = number iterations
                 series1.add(i + 1, graphDate.getData(0, i));
                 series2.add(i + 1, graphDate.getData(1, i));
                 series3.add(i + 1, graphDate.getData(2, i));

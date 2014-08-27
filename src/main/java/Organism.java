@@ -11,8 +11,8 @@ public class Organism {
     /**
      * A measure of fitness for the Organism
      */
-    private double fitness;
-    private double average_fitness = 0.0;
+    //private double average! fitness;
+    private double fitness = 0.0;
     /**
      * Used just for reporting purposes
      */
@@ -152,8 +152,7 @@ public class Organism {
         this.getNet().changeOuter();
         this.setError(getNet().getError4Organism());
         //this.setFitness(getNet().getOut4Organism());
-        this.setFitness(getNet().getError4Organism());
-        this.setAverage_fitness(getFitness(), nPatient4averageFitness);
+        this.setFitness(getError(), nPatient4averageFitness);
     }
 
     /*
@@ -190,29 +189,24 @@ public class Organism {
         this.genome = genome;
     }
 
-    public double getAverage_fitness() {
-        return average_fitness;
-    }
-
-    public void setAverage_fitness(double next_fitness, int iteration) {
-        if (iteration == 1) {
-            this.average_fitness = 0.0;
-        }
-        this.average_fitness = ((iteration-1) * average_fitness + next_fitness) / iteration;
-    }
-
-    /**
-     * @return the fitness
-     */
     public double getFitness() {
         return fitness;
     }
 
     /**
-     * @param fitness the fitness to set
+     * Average fitness = average error on all sample (after BP)
+     * @param next_fitness
+     * @param iteration 
      */
-    public void setFitness(double fitness) {
-        this.fitness = fitness;
+    public void setFitness(double next_fitness, int iteration) {
+        if (iteration == 1) {
+            this.fitness = 0.0;
+        }
+        this.fitness = ((iteration-1) * fitness + next_fitness) / iteration;
+    }
+    
+    void setFitness(double newFitness) {
+        this.fitness = newFitness;
     }
 
     /**
