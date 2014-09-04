@@ -10,6 +10,11 @@ public class GraphDate {
     private List<List<Double>> errors = new ArrayList<List<Double>>();
     private final int numberIterations;
     
+    public GraphDate(GraphDate gD) {
+        errors = gD.getAllErrors();
+        numberIterations = gD.getNiterations();
+    }
+    
     public GraphDate(List<List<Double>> xerrors, int iter) {
         errors = xerrors;
         numberIterations = iter;
@@ -19,11 +24,15 @@ public class GraphDate {
         return errors.get(sample).get(i);
     }
     
+    public List<List<Double>> getAllErrors () {
+        return errors;
+    }
+    
     public int getSize_inSample() {
         return errors.get(0).size();
     }
 
-    Object getNiterations() {
+    int getNiterations() {
         return numberIterations;
     }
 }

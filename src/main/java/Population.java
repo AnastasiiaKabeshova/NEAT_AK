@@ -91,22 +91,22 @@ public final class Population {
          * A random member of each existing species is chosen as its permanent representative.
          * Genomes are tested one at a time; if a genome’s distance to the representative of any 
          * existing species is less than t, a compatibility threshold, it is placed into this species.*/
-        
-        String path = "/Users/anastasiiakabeshova/Documents/these_softPartie/sorties/delta_"+getGenerationNumber()+
-                "_"+EcritureTXTfichier.nextEnabeledIDfile()+".txt";
+
+        String path = "/Users/anastasiiakabeshova/Documents/these_softPartie/sorties/delta_" + getGenerationNumber()
+                + "_" + EcritureTXTfichier.nextEnabeledIDfile() + ".txt";
         EcritureTXTfichier toFile = new EcritureTXTfichier(path);
         toFile.writeToFile(path);
-        
+
         for (int i = 0; i < organisms.size(); i++) {
             boolean added = false;
             for (int j = 0; j < getSpecies().size(); j++) {
                 double delta = organisms.get(i).countDistanceDelta(getSpecies().get(j).getRepresentOrganism());
                 //write delta to file               
-                    toFile.appendToFile(true, delta);
-                
+                toFile.appendToFile(true, delta);
+
                 if (delta < AppProperties.compatThreshold()) {
                     getSpecies().get(j).addOrganism(organisms.get(i));
-                    j = getSpecies().size(); 
+                    j = getSpecies().size();
                     // go out from second for
                     added = true;
                 }
@@ -150,7 +150,7 @@ public final class Population {
         for (int i = 0; i < getSpecies().size(); i++) {
             for (int j = 0; j < getSpecies().get(i).getNumberOrganisms(); j++) {
                 if (i != speciesI || j != organismJ) {
-                    if (organism.countDistanceDelta(getSpecies().get(i).getOrganism(j)) < NeatClass.p_compat_threshold) {
+                    if (organism.countDistanceDelta(getSpecies().get(i).getOrganism(j)) <= NeatClass.p_compat_threshold) {
                         sum += 1;
                     }
                 }
@@ -180,7 +180,9 @@ public final class Population {
         /**
          * speciate
          */
-        if(!childList.isEmpty()) speciate(childList);
+        if (!childList.isEmpty()) {
+            speciate(childList);
+        }
         return childList;
     }
 
@@ -193,7 +195,9 @@ public final class Population {
         /**
          * speciate
          */
-        if(!mutatedOrganisms.isEmpty()) speciate(mutatedOrganisms);
+        if (!mutatedOrganisms.isEmpty()) {
+            speciate(mutatedOrganisms);
+        }
         return mutatedOrganisms;
     }
 
@@ -213,7 +217,7 @@ public final class Population {
         Collections.sort(allOrganisms, new Comparator<Organism>() {
             @Override
             public int compare(Organism o1, Organism o2) {
-                return o2.getFitness()> o1.getFitness() ? 1
+                return o2.getFitness() > o1.getFitness() ? 1
                         : o2.getFitness() < o1.getFitness() ? -1 : 0;
             }
         });
@@ -227,7 +231,7 @@ public final class Population {
             }
         }
     }
-    
+
     public double getBestOrganFitness() {
         return bestOrganism.getFitness();
     }
@@ -283,20 +287,27 @@ public final class Population {
     }
 
     /**
-     * bestOrganism to set
-     * best Organism = error minimal
+     * bestOrganism to set best Organism = error minimal
      */
-    public void setBestOrganism() {
-        this.bestOrganism = getSpecies().get(0).getOrganism(0);
-         for (int i = 0; i < getSpecies().size(); i++) {
+    public boolean setBestOrganism() {
+        boolean flag = false;
+        if (this.bestOrganism == null) {
+            this.bestOrganism = getSpecies().get(0).getOrganism(0);
+            flag = true;
+        }
+        System.out.println("old Best organism fitness: " + bestOrganism.getFitness());
+        for (int i = 0; i < getSpecies().size(); i++) {
             for (int j = 0; j < getSpecies().get(i).getNumberOrganisms(); j++) {
-                if (getSpecies().get(i).getOrganism(j).getFitness()< bestOrganism.getFitness()) {
-                     this.bestOrganism = getSpecies().get(i).getOrganism(j);
+                if (getSpecies().get(i).getOrganism(j).getFitness() < bestOrganism.getFitness()) {
+                    this.bestOrganism = getSpecies().get(i).getOrganism(j);
+                    flag = true;
                 }
             }
         }
+        System.out.println("new Best organism fitness: " + bestOrganism.getFitness());
+        return flag;
     }
-    
+
     /**
      * @param id
      * @return the Organism by Organism_id
@@ -305,7 +316,7 @@ public final class Population {
         for (int i = 0; i < getSpecies().size(); i++) {
             for (int j = 0; j < getSpecies().get(i).getNumberOrganisms(); j++) {
                 if (getSpecies().get(i).getOrganism(j).getOrganism_id() == id) {
-                   return getSpecies().get(i).getOrganism(j);
+                    return getSpecies().get(i).getOrganism(j);
                 }
             }
         }

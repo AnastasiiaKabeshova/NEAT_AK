@@ -72,6 +72,10 @@ public class AppProperties {
         return Integer.parseInt(getProperty("pop.size","50"));
     }
     
+    public static int coefMultiplEpoch() {
+        return Integer.parseInt(getProperty("coef.multipl.epoch", "10"));
+    }
+    
     private static String getProperty(String propName) {
         return getProperty(propName, null);
     }

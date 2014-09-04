@@ -302,11 +302,6 @@ public final class Species extends NeatClass {
 
     public void removeOrganism(Organism org) {
         getOrganisms().remove(org);
-        
-        if (getOrganisms().isEmpty()) {
-            System.out.println("Species is empty (after remove organism)");
-            //System.out.println(this.toString());
-        }
     }
 
     private void addInOutLink(Gene get) {

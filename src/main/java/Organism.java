@@ -1,4 +1,5 @@
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,6 +38,10 @@ public class Organism {
      * The Organism's Species
      */
     Species species;
+    /**
+     * averaged error on testing sample afret BP
+     */
+    private List< List<Double>> averErrors = new ArrayList< List<Double>>();
 
     public Organism() {
     }
@@ -131,8 +136,8 @@ public class Organism {
         double count = 0.0;
         while (i < this.getGenomeSize() && j < org.getGenomeSize()) {
             if (this.getGenome().getGenes().get(i).getInnovation_num() == org.getGenome().getGenes().get(j).getInnovation_num()) {
-                W += Math.abs(this.getGenome().getGenes().get(i).getLink().getWeight() - 
-                        org.getGenome().getGenes().get(j).getLink().getWeight());
+                W += Math.abs(this.getGenome().getGenes().get(i).getLink().getWeight()
+                        - org.getGenome().getGenes().get(j).getLink().getWeight());
                 count += 1.0;
                 i++;
                 j++;
@@ -148,6 +153,20 @@ public class Organism {
         return (W / count);
     }
 
+    /**
+     * Count Errors on Training and validation samples
+     * @throws Exception 
+     */
+    public void countFitnessOut() throws Exception {
+        this.getNet().changeOuter();
+        this.setError(getNet().getError4Organism());
+    }
+    
+    /**
+     * Count Errors & Fitness on Testing sample
+     * @param nPatient4averageFitness
+     * @throws Exception 
+     */
     public void countFitnessOut(int nPatient4averageFitness) throws Exception {
         this.getNet().changeOuter();
         this.setError(getNet().getError4Organism());
@@ -195,16 +214,17 @@ public class Organism {
 
     /**
      * Average fitness = average error on all sample (after BP)
+     *
      * @param next_fitness
-     * @param iteration 
+     * @param iteration
      */
     public void setFitness(double next_fitness, int iteration) {
         if (iteration == 1) {
             this.fitness = 0.0;
         }
-        this.fitness = ((iteration-1) * fitness + next_fitness) / iteration;
+        this.fitness = ((iteration - 1) * fitness + next_fitness) / iteration;
     }
-    
+
     void setFitness(double newFitness) {
         this.fitness = newFitness;
     }
@@ -257,5 +277,23 @@ public class Organism {
      */
     public void setError(double error) {
         this.error = error;
+    }
+
+    /**
+     * @return the averErrors
+     */
+    public List< List<Double>> getAverErrors() {
+        return averErrors;
+    }
+
+    /**
+     * @param l_averErrors the averErrors to set
+     */
+    public void setAverErrors(List< List<Double>> l_averErrors) {
+        if(!this.averErrors.isEmpty()) {this.averErrors.clear();}
+        this.averErrors.add(new ArrayList<Double>()); //trainig
+        this.averErrors.add(new ArrayList<Double>()); //testing
+        this.averErrors.add(new ArrayList<Double>()); //validation
+        this.averErrors = l_averErrors;
     }
 }

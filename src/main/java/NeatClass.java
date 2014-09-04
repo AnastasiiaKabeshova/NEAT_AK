@@ -82,7 +82,7 @@ public class NeatClass {
      */
     public static double p_train_pattern = 0.7;
     public static double p_test_pattern = 0.2;
-    public static double p_valid_pattern = 0.7;
+    public static double p_valid_pattern = 0.1;
     /**
      * training coefficient for back propagandation
      */
@@ -172,17 +172,6 @@ public class NeatClass {
      * Generation
      */
     public List< List<Double>> backPropagation(List<Organism> chromosomes) throws Exception {
-        List< List<Double>> bestOrgan = new ArrayList< List<Double>>();
-        //for 3 samples
-        bestOrgan.add(new ArrayList<Double>());
-        bestOrgan.add(new ArrayList<Double>());
-        bestOrgan.add(new ArrayList<Double>());
-
-        List< List<Double>> curErrorBestOrgan = new ArrayList< List<Double>>();
-        curErrorBestOrgan.add(new ArrayList<Double>());
-        curErrorBestOrgan.add(new ArrayList<Double>());
-        curErrorBestOrgan.add(new ArrayList<Double>());
-
         /**
          * Прогонять выборку надо несколько эпох. Чем больше номер генерации ГА,
          * тем больше эпох.
@@ -195,48 +184,63 @@ public class NeatClass {
         // for every organism in population (at the begining)
         // and for every chromosome on the next steps
         for (Organism organ : chromosomes) {
+            // errors on this organism for all samples for calculated number of Iterations
+            List< List<Double>> curErrorOrgan = new ArrayList< List<Double>>();
+            curErrorOrgan.add(new ArrayList<Double>()); //trainig
+            curErrorOrgan.add(new ArrayList<Double>()); //testing
+            curErrorOrgan.add(new ArrayList<Double>()); //validation
+
             for (int e = 0; e < numIterations; e++) {
                 //take sous - Datas
                 for (int i = 0; i < samples.size(); i++) {
                     double curErr = 0;
                     for (int j = 0; j < samples.get(i).size(); j++) {
+
                         //count fitness and error for every data line
                         List<Double> outNodes = new ArrayList<Double>();
                         outNodes.add(answers.get(samples.get(i).get(j)));
                         organ.setInputData(datas.get(samples.get(i).get(j)), outNodes);
                         // count fitness only for testing sample
-                        if (i == 1) { organ.countFitnessOut(j+1);} 
+                        if (i == 1) {
+                            organ.countFitnessOut(j + 1);
+                        } else {
+                            organ.countFitnessOut();
+                        }
                         //change weigths
                         organ.getNet().ajustmentWeigth();
                         curErr += organ.getError();
                     }
-                    //error = avarege for all patients in this sample
-                    curErrorBestOrgan.get(i).add(curErr/samples.get(i).size());
+                    //error = avarege for all patients in this sample on current iteration
+                    curErrorOrgan.get(i).add(curErr / samples.get(i).size());
                 }
             }
-            if (bestOrgan.get(0).isEmpty()) { bestOrgan = curErrorBestOrgan; }
-            if (curErrorBestOrgan.get(0).get(curErrorBestOrgan.get(0).size() - 1) < bestOrgan.get(0).get(bestOrgan.get(0).size() - 1)) {
-                bestOrgan = curErrorBestOrgan;
-            }
+            organ.setAverErrors(curErrorOrgan);
         }
-        
+        /**
+         * explicit fitness sharing for species in population
+         */
+        population.explicitFitness();
+
         /**
          * find best organism in population
          */
-        population.setBestOrganism();
-
-        return bestOrgan;
+        boolean changed = population.setBestOrganism();
+        if (changed) {
+            return population.getBestOrganism().getAverErrors();
+        }
+        return null;
     }
 
     public List<GraphDate> NEATalgorithm() throws Exception {
         int iterationCounter = 0;
-        
+
         List<GraphDate> fGraphs = new ArrayList<GraphDate>();
+        GraphDate gData;
 
         // create list of all organisms
         List<Organism> allOrg = new ArrayList<Organism>();
         for (int i = 0; i < population.getSpeciesNumber(); i++) {
-                allOrg.addAll(population.getSpecies().get(i).getOrganisms());
+            allOrg.addAll(population.getSpecies().get(i).getOrganisms());
         }
         //count Errors with initial population (in -> out)
         fGraphs.add(countBP_dataGraph(allOrg));
@@ -245,35 +249,47 @@ public class NeatClass {
             //genetic algorithm step
             List<Organism> mutatedOrg = new ArrayList<Organism>();
             mutatedOrg = population.GAstep_mutation();
-            if(!mutatedOrg.isEmpty()) {fGraphs.add(countBP_dataGraph(mutatedOrg));}
-            population.GAstep_selection();
-            population.nextGenerationNumber();
+            if (!mutatedOrg.isEmpty()) {
+                fGraphs.add(countBP_dataGraph(mutatedOrg));
+                //remove if last added was NULL
+                if (fGraphs.get(fGraphs.size() - 1) == null) {
+                    fGraphs.remove(fGraphs.size() - 1);
+                }
+                population.GAstep_selection();
+                population.nextGenerationNumber();
+            }
 
             List<Organism> childOrg = new ArrayList<Organism>();
-            population.GAstep_crossover();
-            if(!childOrg.isEmpty()) {fGraphs.add(countBP_dataGraph(childOrg));}
-            population.GAstep_selection();
-            population.nextGenerationNumber();
+            childOrg = population.GAstep_crossover();
+            if (!childOrg.isEmpty()) {
+                fGraphs.add(countBP_dataGraph(childOrg));
+                //remove if last added was NULL
+                if (fGraphs.get(fGraphs.size() - 1) == null) {
+                    fGraphs.remove(fGraphs.size() - 1);
+                }
+                population.GAstep_selection();
+                population.nextGenerationNumber();
+            }
 
             iterationCounter++;
             System.out.println("Iteration: " + iterationCounter);
-            
+
             System.out.println("Number of species in population: " + population.getSpeciesNumber());
-            
+
             /*stop criteria : Критерий окончания работы ГА - 
-            ошибка обобщения для лучшей сети (хромосомы в популяции) 
-            станет меньше, чем некоторый уровень. */
+             ошибка обобщения для лучшей сети (хромосомы в популяции) 
+             станет меньше, чем некоторый уровень. */
             /*if (population.getBestOrganFitness() < p_GAerror_threshold) {
-                break;
-            }*/
-            int size = fGraphs.size()-1;
+             break;
+             }*/
+            int size = fGraphs.size() - 1;
             int last = fGraphs.get(size).getSize_inSample() - 1;
-            if(fGraphs.get(size).getData(0,last) < p_GAerror_threshold & fGraphs.get(size).getData(2,last) < p_GAerror_threshold & fGraphs.get(size).getData(0,last) < p_GAerror_threshold) {
+            if (fGraphs.get(size).getData(0, last) < p_GAerror_threshold & fGraphs.get(size).getData(1, last) < p_GAerror_threshold & fGraphs.get(size).getData(2, last) < p_GAerror_threshold) {
                 break;
             }
-            
+
         } while (iterationCounter < AppProperties.iterationCount());
-        
+
         return fGraphs;
     }
 
@@ -286,9 +302,12 @@ public class NeatClass {
         localError = backPropagation(org);
 
         //for graph graph
-        int numIterations = population.getGenerationNumber() * NeatClass.p_coef_multipl_epoch;
-        GraphDate gData = new GraphDate(localError, numIterations);
-        return gData;
+        if (localError != null) {
+            int numIterations = population.getGenerationNumber() * NeatClass.p_coef_multipl_epoch;
+            GraphDate gData = new GraphDate(localError, numIterations);
+            return gData;
+        }
+        return null;
     }
 
     public int getNumberCharacteristics() {

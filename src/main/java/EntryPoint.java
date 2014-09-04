@@ -48,7 +48,7 @@ public class EntryPoint {
         List< GraphDate> dataToPrint = neatANN.NEATalgorithm();
 
         int counter = 0;
-        for (Iterator<GraphDate> data = dataToPrint.iterator(); data.hasNext();) {
+        for (GraphDate graphDate : dataToPrint) {
             // create images
             XYSeries series1 = new XYSeries("Training error");
             XYSeries series2 = new XYSeries("Testing error");
@@ -59,8 +59,7 @@ public class EntryPoint {
             dataset.addSeries(series2);
             dataset.addSeries(series3);
 
-            GraphDate graphDate = data.next();
-            for (int i = 0; i < graphDate.getSize_inSample(); i++) { //graphDate.getSize() = number iterations
+            for (int i = 0; i < graphDate.getNiterations(); i++) { //number of iterations
                 series1.add(i + 1, graphDate.getData(0, i));
                 series2.add(i + 1, graphDate.getData(1, i));
                 series3.add(i + 1, graphDate.getData(2, i));
