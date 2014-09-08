@@ -40,7 +40,7 @@ public final class Population {
      * connecting two nodes.
      */
     public Population(List<Double> inNodes, List<Double> outNodes) {
-        this.setSize(NeatClass.p_pop_size);
+        this.setSize(AppProperties.populationSize());
         OrganismFactory fabrica = new OrganismFactory();
         OrganismFactory.resetIndexes();
         List<Organism> organisms = new ArrayList<Organism>();
@@ -58,7 +58,7 @@ public final class Population {
      * of elements in organism
      */
     public void initialPopulation(List< List<Double>> inNodes, List<Double> outNodes) {
-        this.setSize(NeatClass.p_pop_size);
+        this.setSize(AppProperties.populationSize());
         OrganismFactory fabrica = new OrganismFactory();
         List<Organism> organisms = new ArrayList<Organism>();
 
@@ -295,7 +295,6 @@ public final class Population {
             this.bestOrganism = getSpecies().get(0).getOrganism(0);
             flag = true;
         }
-        System.out.println("old Best organism fitness: " + bestOrganism.getFitness());
         for (int i = 0; i < getSpecies().size(); i++) {
             for (int j = 0; j < getSpecies().get(i).getNumberOrganisms(); j++) {
                 if (getSpecies().get(i).getOrganism(j).getFitness() < bestOrganism.getFitness()) {
@@ -304,7 +303,9 @@ public final class Population {
                 }
             }
         }
-        System.out.println("new Best organism fitness: " + bestOrganism.getFitness());
+        if (flag) {
+            System.out.println("NEW Best organism fitness: " + bestOrganism.getFitness());
+        }
         return flag;
     }
 

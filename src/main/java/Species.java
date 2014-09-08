@@ -262,10 +262,10 @@ public final class Species extends NeatClass {
         int N = organism4mutation.getGenomeSize();
         for (int i = 0; i < N; i++) {
             double rand = Math.random();
-            if (rand < NeatClass.p_mutate_add_node) { // p_mutate_add_node < p_mutate_add_link!!!
+            if (rand < AppProperties.coefMutateAddNode()) { // p_mutate_add_node < p_mutate_add_link!!!
                 organism4mutation.getGenome().mutate_addNode(organism4mutation.getGenome().getGenes().get(i).getInnovation_num());
                 changed = true;
-            } else if (rand < NeatClass.p_mutate_add_link) {
+            } else if (rand < AppProperties.coefMutateAddLink()) {
                 // get second random Nodes in Network
                 if (organism4mutation.getNet().getNumberHidden() != 0) {
                     organism4mutation.refreshNet();

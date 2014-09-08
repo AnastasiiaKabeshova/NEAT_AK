@@ -291,9 +291,9 @@ public class Organism {
      */
     public void setAverErrors(List< List<Double>> l_averErrors) {
         if(!this.averErrors.isEmpty()) {this.averErrors.clear();}
-        this.averErrors.add(new ArrayList<Double>()); //trainig
+        /*this.averErrors.add(new ArrayList<Double>()); //trainig
         this.averErrors.add(new ArrayList<Double>()); //testing
-        this.averErrors.add(new ArrayList<Double>()); //validation
+        this.averErrors.add(new ArrayList<Double>()); //validation*/
         this.averErrors = l_averErrors;
     }
 }

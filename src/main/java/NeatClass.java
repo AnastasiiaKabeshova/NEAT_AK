@@ -176,7 +176,7 @@ public class NeatClass {
          * Прогонять выборку надо несколько эпох. Чем больше номер генерации ГА,
          * тем больше эпох.
          */
-        int numIterations = population.getGenerationNumber() * NeatClass.p_coef_multipl_epoch;
+        int numIterations = population.getGenerationNumber() * AppProperties.coefMultiplEpoch();
         if (numIterations > NeatClass.p_BP_max_iterations) {
             numIterations = NeatClass.p_BP_max_iterations;
         }
@@ -219,7 +219,7 @@ public class NeatClass {
         /**
          * explicit fitness sharing for species in population
          */
-        population.explicitFitness();
+        //population.explicitFitness();
 
         /**
          * find best organism in population
@@ -235,7 +235,6 @@ public class NeatClass {
         int iterationCounter = 0;
 
         List<GraphDate> fGraphs = new ArrayList<GraphDate>();
-        GraphDate gData;
 
         // create list of all organisms
         List<Organism> allOrg = new ArrayList<Organism>();
@@ -250,25 +249,27 @@ public class NeatClass {
             List<Organism> mutatedOrg = new ArrayList<Organism>();
             mutatedOrg = population.GAstep_mutation();
             if (!mutatedOrg.isEmpty()) {
+                population.nextGenerationNumber();
+                System.out.println("Generation Number after mutation: " + population.getGenerationNumber());
                 fGraphs.add(countBP_dataGraph(mutatedOrg));
                 //remove if last added was NULL
                 if (fGraphs.get(fGraphs.size() - 1) == null) {
                     fGraphs.remove(fGraphs.size() - 1);
                 }
                 population.GAstep_selection();
-                population.nextGenerationNumber();
             }
 
             List<Organism> childOrg = new ArrayList<Organism>();
             childOrg = population.GAstep_crossover();
             if (!childOrg.isEmpty()) {
+                population.nextGenerationNumber();
+                System.out.println("Generation Number after crossover: " + population.getGenerationNumber());
                 fGraphs.add(countBP_dataGraph(childOrg));
                 //remove if last added was NULL
                 if (fGraphs.get(fGraphs.size() - 1) == null) {
                     fGraphs.remove(fGraphs.size() - 1);
                 }
                 population.GAstep_selection();
-                population.nextGenerationNumber();
             }
 
             iterationCounter++;
@@ -303,7 +304,7 @@ public class NeatClass {
 
         //for graph graph
         if (localError != null) {
-            int numIterations = population.getGenerationNumber() * NeatClass.p_coef_multipl_epoch;
+            int numIterations = population.getGenerationNumber() * AppProperties.coefMultiplEpoch();
             GraphDate gData = new GraphDate(localError, numIterations);
             return gData;
         }

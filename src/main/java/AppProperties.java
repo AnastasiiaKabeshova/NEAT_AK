@@ -76,6 +76,14 @@ public class AppProperties {
         return Integer.parseInt(getProperty("coef.multipl.epoch", "10"));
     }
     
+    public static double coefMutateAddNode() {
+        return Double.parseDouble(getProperty("mutate.add.node", "0.1"));
+    }
+    
+    public static double coefMutateAddLink() {
+        return Double.parseDouble(getProperty("mutate.add.link", "0.3"));
+    }
+    
     private static String getProperty(String propName) {
         return getProperty(propName, null);
     }

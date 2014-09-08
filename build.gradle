@@ -7,7 +7,7 @@ mainClass = 'EntryPoint'
 //'NEATFrame'
 mainClassName = "EntryPoint"
 
-sourceCompatibility = '1.6'
+sourceCompatibility = '1.7'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 // NetBeans will automatically add "run" and "debug" tasks relying on the
