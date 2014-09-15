@@ -84,6 +84,10 @@ public class AppProperties {
         return Double.parseDouble(getProperty("mutate.add.link", "0.3"));
     }
     
+    public static int numberIterationsBP() {
+        return Integer.parseInt(getProperty("BP.max.iterations", "1000"));
+    }
+    
     private static String getProperty(String propName) {
         return getProperty(propName, null);
     }

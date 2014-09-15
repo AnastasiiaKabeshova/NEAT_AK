@@ -177,8 +177,8 @@ public class NeatClass {
          * тем больше эпох.
          */
         int numIterations = population.getGenerationNumber() * AppProperties.coefMultiplEpoch();
-        if (numIterations > NeatClass.p_BP_max_iterations) {
-            numIterations = NeatClass.p_BP_max_iterations;
+        if (numIterations > AppProperties.numberIterationsBP()) {
+            numIterations = AppProperties.numberIterationsBP();
         }
 
         // for every organism in population (at the begining)
@@ -305,6 +305,9 @@ public class NeatClass {
         //for graph graph
         if (localError != null) {
             int numIterations = population.getGenerationNumber() * AppProperties.coefMultiplEpoch();
+            if (numIterations > AppProperties.numberIterationsBP()) {
+                numIterations = AppProperties.numberIterationsBP();
+            }
             GraphDate gData = new GraphDate(localError, numIterations);
             return gData;
         }
