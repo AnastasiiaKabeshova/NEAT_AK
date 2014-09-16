@@ -10,6 +10,9 @@ public class OrganismFactory {
     private static int enableGenomeID = 1;
     private static int enableInnovationNumber = 1;
 
+    private final List<Node> inSpecimen = new ArrayList<Node>(); // All inputs of neuron
+    private final List<Node> outSpecimen = new ArrayList<Node>(); // All outs of neuron
+
     public static int nextEnabeledGenomeID() {
         return enableGenomeID++;
     }
@@ -37,18 +40,29 @@ public class OrganismFactory {
         return enableLinkID++;
     }
 
-    public Organism createOrganism(List<Double> inNodes, List<Double> outNodes) {
+    public void createSpecimen(List<Double> in, List<Double> out) {
+        for (int i = 0; i < out.size(); i++) {
+            Node newOutNode = new Node(out.get(i), NodeType.OUTPUT, nextEnabledNodeID());
+            outSpecimen.add(newOutNode);
+        }
+        for (int j = 0; j < in.size(); j++) {
+            Node newInNode = new Node(in.get(j), NodeType.INPUT, nextEnabledNodeID());
+            inSpecimen.add(newInNode);
+        }
+    }
+
+    public Organism createOrganism() {
         //create initial genome in -> out
-        List<Gene> genes = new ArrayList<Gene>();
         List<Node> createdOutNodes = new ArrayList<Node>();
         Network net = new Network();
-        for (int i = 0; i < outNodes.size(); i++) {
-            Node newOutNode = new Node(outNodes.get(i), NodeType.OUTPUT);   
+        for (int i = 0; i < outSpecimen.size(); i++) {
+            Node newOutNode = new Node(outSpecimen.get(i), false);
             createdOutNodes.add(newOutNode);
             net.addOutNode(newOutNode);
         }
-        for (int j = 0; j < inNodes.size(); j++) {
-            Node newInNode = new Node(inNodes.get(j), NodeType.INPUT);
+        List<Gene> genes = new ArrayList<Gene>();
+        for (int j = 0; j < inSpecimen.size(); j++) {
+            Node newInNode = new Node(inSpecimen.get(j), false);
             net.addInNode(newInNode);
             for (int i = 0; i < createdOutNodes.size(); i++) {
                 Link newLink = new Link(newInNode, createdOutNodes.get(i));  // newOutNode.addIncomingLink(newLink); - Link constructior do this

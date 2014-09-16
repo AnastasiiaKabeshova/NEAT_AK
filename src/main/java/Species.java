@@ -108,7 +108,8 @@ public final class Species extends NeatClass {
                 j++;
             }
 
-        } /**
+        } 
+        /**
          * not equally fitted parents
          */
         else {
@@ -177,15 +178,8 @@ public final class Species extends NeatClass {
 
     private Gene matchingGeneSelect_secondMethod(Gene par1, Gene par2) {
         int x = (Math.random() < 0.5) ? 0 : 1;
-        if (x == 0) {
-            Link copyLink = new Link(par1.getLink().getWeight(), par1.getLink());
-            Gene g = new Gene(copyLink, par1.getInnovation_num(), par1.isEnable());
-            return g;
-        } else {
-            Link copyLink = new Link(par2.getLink().getWeight(), par2.getLink());
-            Gene g = new Gene(copyLink, par2.getInnovation_num(), par2.isEnable());
-            return g;
-        }
+        //TODO
+        return null;
     }
 
     //TODO второй тип кроссовера!!!!

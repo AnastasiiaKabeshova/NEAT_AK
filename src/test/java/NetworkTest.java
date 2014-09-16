@@ -15,7 +15,7 @@ public class NetworkTest {
         OrganismFactory fabrica = new OrganismFactory();
         List<Double> inNodes2 = Arrays.asList(1.0, 2.0, 3.0);
         List<Double> outNodes = Arrays.asList(1.0);
-        Organism o2 = fabrica.createOrganism(inNodes2, outNodes);
+        Organism o2 = fabrica.createOrganism();
         setWeigth(o2, 0, 0.1);
         setWeigth(o2, 1, 0.2);
         setWeigth(o2, 2, 0.3);
@@ -35,7 +35,7 @@ public class NetworkTest {
         OrganismFactory fabrica = new OrganismFactory();
         List<Double> inNodes2 = Arrays.asList(1.0, 2.0, 3.0);
         List<Double> outNodes = Arrays.asList(1.0);
-        Organism o2 = fabrica.createOrganism(inNodes2, outNodes);
+        Organism o2 = fabrica.createOrganism();
         setWeigth(o2, 0, 0.1);
         setWeigth(o2, 1, 0.2);
         setWeigth(o2, 2, 0.3);

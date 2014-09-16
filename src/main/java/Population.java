@@ -44,8 +44,9 @@ public final class Population {
         OrganismFactory fabrica = new OrganismFactory();
         OrganismFactory.resetIndexes();
         List<Organism> organisms = new ArrayList<Organism>();
+        fabrica.createSpecimen(inNodes, outNodes);
         for (int count = 0; count < this.getSize(); count++) {
-            organisms.add(fabrica.createOrganism(inNodes, outNodes));
+            organisms.add(fabrica.createOrganism());
         }
         initialSpeciate(organisms);
     }
@@ -64,8 +65,9 @@ public final class Population {
 
         List<Double> out = new ArrayList<Double>();
         out.add(outNodes.get(0));
+        fabrica.createSpecimen(inNodes.get(0), out);
         for (int count = 0; count < this.getSize(); count++) {
-            organisms.add(fabrica.createOrganism(inNodes.get(0), out));
+            organisms.add(fabrica.createOrganism());
         }
         initialSpeciate(organisms);
     }

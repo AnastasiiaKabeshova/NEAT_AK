@@ -18,7 +18,7 @@ public class SpeciesTest {
         OrganismFactory fabrica = new OrganismFactory ();
         List<Double> inNodes1 = Arrays.asList(1.0,2.0,3.0,4.0,5.0);
         List<Double> outNodes = Arrays.asList(1.0,2.0);
-        Organism o =  fabrica.createOrganism(inNodes1, outNodes);
+        Organism o =  fabrica.createOrganism();
         
         Species s1 = new Species();
         s1.addOrganism(o);
@@ -61,7 +61,7 @@ public class SpeciesTest {
         OrganismFactory fabrica = new OrganismFactory();
         OrganismFactory.resetIndexes();
         
-        Organism o1 = fabrica.createOrganism(inNodes, outNodes);
+        Organism o1 = fabrica.createOrganism();
         List<Gene> genes = new ArrayList<Gene>();
         genes.add(o1.getGenome().getGenes().get(1));
         genes.add(o1.getGenome().getGenes().get(2));

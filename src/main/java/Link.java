@@ -56,8 +56,8 @@ public class Link {
     public Link(double w, Link l) {
         linkID = l.getLinkID();
         weight = w;
-        in_node = new Node(l.getIn_node());
-        out_node = new Node(l.getOut_node());
+        in_node = new Node(l.getIn_node(), true);
+        out_node = new Node(l.getOut_node(), true);
     }
 
     public double getWeight() {

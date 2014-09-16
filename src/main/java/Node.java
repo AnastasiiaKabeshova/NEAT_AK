@@ -36,14 +36,22 @@ public final class Node extends NeatClass {
         this.setNodeID(OrganismFactory.nextEnabledNodeID());
     }
 
-    public Node(Node n) {
+    public Node(double newPotential, NodeType node_type, int node_ID) {
+        this.setPotential(newPotential);
+        type = node_type;
+        this.setNodeID(node_ID);
+    }
+
+    public Node(Node n, boolean copyLinks) {
         this.setNodeID(n.getNodeID());
         this.setType(n.getType());
         this.setPotential(n.getPotential());
-        this.setAnswer(n.getAnswer());
-        this.setMisalignment(n.getMisalignment());
-        this.incomingLinks.addAll(n.getIncomingLinks());
-        this.outgoingLinks.addAll(n.getOutgoingLinks());
+        if (copyLinks) {
+            this.setAnswer(n.getAnswer());
+            this.setMisalignment(n.getMisalignment());
+            this.incomingLinks.addAll(n.getIncomingLinks());
+            this.outgoingLinks.addAll(n.getOutgoingLinks());
+        }
     }
 
     public Link getIncomingLink(int index) {
