@@ -310,7 +310,7 @@ public class NeatClass {
             if (numIterations > AppProperties.numberIterationsBP()) {
                 numIterations = AppProperties.numberIterationsBP();
             }
-            GraphDate gData = new GraphDate(localError, numIterations);
+            GraphDate gData = new GraphDate(localError, numIterations, population.getGenerationNumber());
             return gData;
         }
         return null;

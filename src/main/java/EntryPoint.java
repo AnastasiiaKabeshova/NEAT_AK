@@ -69,7 +69,7 @@ public class EntryPoint {
             iteration.setPaint(Color.darkGray);
             iteration.setLabel(String.valueOf(graphDate.getNiterations()));
             iteration.setLabelTextAnchor(TextAnchor.TOP_CENTER);*/
-            ChartUtilities.saveChartAsJPEG(new File("chartImage" + counter + ".jpeg"), chart, 800, 600);
+            ChartUtilities.saveChartAsJPEG(new File("generation_No_" + graphDate.getGenerationNumber() + ".jpeg"), chart, 800, 600);
         }
 
     }
