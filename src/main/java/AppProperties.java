@@ -88,6 +88,12 @@ public class AppProperties {
         return Integer.parseInt(getProperty("BP.max.iterations", "1000"));
     }
     
+    public static double thresholdGAstopError() {
+        return Double.parseDouble(getProperty("GAerror.threshold", "0.01"));
+    }
+            
+            
+    
     private static String getProperty(String propName) {
         return getProperty(propName, null);
     }

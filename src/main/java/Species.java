@@ -280,7 +280,7 @@ public final class Species extends NeatClass {
     }
 
     public List<Organism> mutation(int numForAverageFitness) throws Exception {
-        List<Organism> mutated = new ArrayList<Organism>();
+        List<Organism> mutated = new ArrayList<>();
         int N = this.getNumberOrganisms();
         for (int i = 0; i < N; i++) {
             OrganismFactory fabrica = new OrganismFactory();

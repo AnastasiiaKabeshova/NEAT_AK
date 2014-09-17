@@ -44,7 +44,7 @@ public class GenomeTest {
         OrganismFactory fabrica = new OrganismFactory ();
         List<Double> inNodes = Arrays.asList(1.0,2.0,3.0);
         List<Double> outNodes = Arrays.asList(1.0);
-        Organism o =  fabrica.createOrganism();
+        Organism o =  fabrica.createOrganismFromSpecimen();
         Genome instance = o.getGenome();
         
         int linkInnovNum = 3;
@@ -63,7 +63,7 @@ public class GenomeTest {
         OrganismFactory fabrica = new OrganismFactory ();
         List<Double> inNodes = Arrays.asList(1.0,2.0,3.0);
         List<Double> outNodes = Arrays.asList(1.0);
-        Organism o =  fabrica.createOrganism();
+        Organism o =  fabrica.createOrganismFromSpecimen();
         Genome instance = o.getGenome();
         
         int linkInnovNum = 5;

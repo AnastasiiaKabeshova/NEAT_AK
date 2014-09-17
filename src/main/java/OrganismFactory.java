@@ -7,11 +7,10 @@ public class OrganismFactory {
 
     private static int enableNodeID = 1;
     private static int enableLinkID = 1;
-    private static int enableGenomeID = 1;
+    private static int enableGenomeID = 0;
     private static int enableInnovationNumber = 1;
 
-    private final List<Node> inSpecimen = new ArrayList<Node>(); // All inputs of neuron
-    private final List<Node> outSpecimen = new ArrayList<Node>(); // All outs of neuron
+    private Organism specimen = new Organism();
 
     public static int nextEnabeledGenomeID() {
         return enableGenomeID++;
@@ -41,40 +40,32 @@ public class OrganismFactory {
     }
 
     public void createSpecimen(List<Double> in, List<Double> out) {
+        List<Node> outputSpecimen = new ArrayList<>();
+        Network net = new Network();
         for (int i = 0; i < out.size(); i++) {
             Node newOutNode = new Node(out.get(i), NodeType.OUTPUT, nextEnabledNodeID());
-            outSpecimen.add(newOutNode);
+            net.addOutNode(newOutNode);
+            outputSpecimen.add(newOutNode);
         }
+        List<Gene> genes = new ArrayList<>();
         for (int j = 0; j < in.size(); j++) {
             Node newInNode = new Node(in.get(j), NodeType.INPUT, nextEnabledNodeID());
-            inSpecimen.add(newInNode);
-        }
-    }
-
-    public Organism createOrganism() {
-        //create initial genome in -> out
-        List<Node> createdOutNodes = new ArrayList<Node>();
-        Network net = new Network();
-        for (int i = 0; i < outSpecimen.size(); i++) {
-            Node newOutNode = new Node(outSpecimen.get(i), false);
-            createdOutNodes.add(newOutNode);
-            net.addOutNode(newOutNode);
-        }
-        List<Gene> genes = new ArrayList<Gene>();
-        for (int j = 0; j < inSpecimen.size(); j++) {
-            Node newInNode = new Node(inSpecimen.get(j), false);
             net.addInNode(newInNode);
-            for (int i = 0; i < createdOutNodes.size(); i++) {
-                Link newLink = new Link(newInNode, createdOutNodes.get(i));  // newOutNode.addIncomingLink(newLink); - Link constructior do this
+            for (int i = 0; i < outputSpecimen.size(); i++) {
+                Link newLink = new Link(newInNode, outputSpecimen.get(i));  // newOutNode.addIncomingLink(newLink); - Link constructior do this
                 genes.add(new Gene(newLink, nextEnabeledInnovetionNumber(), true));
             }
         }
         Genome newGenome = new Genome(nextEnabeledGenomeID(), genes);
-        return (new Organism(newGenome, net));
+        specimen = new Organism(newGenome);
+    }
+
+    public Organism createOrganismFromSpecimen() {
+        return (createOrganism(specimen.getGenome().getGenes()));
     }
 
     public Organism createOrganism(List<Gene> genes) {
-        List<Gene> copyGenes = new ArrayList<Gene>();
+        List<Gene> copyGenes = new ArrayList<>();
         for (Iterator<Gene> it = genes.iterator(); it.hasNext();) {
             copyGenes.add(new Gene(it.next()));
         }

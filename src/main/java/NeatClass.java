@@ -285,7 +285,9 @@ public class NeatClass {
              }*/
             int size = fGraphs.size() - 1;
             int last = fGraphs.get(size).getSize_inSample() - 1;
-            if (fGraphs.get(size).getData(0, last) < p_GAerror_threshold & fGraphs.get(size).getData(1, last) < p_GAerror_threshold & fGraphs.get(size).getData(2, last) < p_GAerror_threshold) {
+            if (fGraphs.get(size).getData(0, last) < AppProperties.thresholdGAstopError() & 
+                    fGraphs.get(size).getData(1, last) < AppProperties.thresholdGAstopError() & 
+                    fGraphs.get(size).getData(2, last) < AppProperties.thresholdGAstopError()) {
                 break;
             }
 

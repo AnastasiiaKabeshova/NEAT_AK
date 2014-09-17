@@ -46,7 +46,7 @@ public final class Population {
         List<Organism> organisms = new ArrayList<Organism>();
         fabrica.createSpecimen(inNodes, outNodes);
         for (int count = 0; count < this.getSize(); count++) {
-            organisms.add(fabrica.createOrganism());
+            organisms.add(fabrica.createOrganismFromSpecimen());
         }
         initialSpeciate(organisms);
     }
@@ -67,7 +67,7 @@ public final class Population {
         out.add(outNodes.get(0));
         fabrica.createSpecimen(inNodes.get(0), out);
         for (int count = 0; count < this.getSize(); count++) {
-            organisms.add(fabrica.createOrganism());
+            organisms.add(fabrica.createOrganismFromSpecimen());
         }
         initialSpeciate(organisms);
     }
@@ -290,6 +290,7 @@ public final class Population {
 
     /**
      * bestOrganism to set best Organism = error minimal
+     * @return 
      */
     public boolean setBestOrganism() {
         boolean flag = false;

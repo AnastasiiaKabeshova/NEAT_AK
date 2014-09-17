@@ -23,7 +23,7 @@ public class OrganismFactoryTest {
         OrganismFactory fabrica = new OrganismFactory ();
         List<Double> inNodes1 = Arrays.asList(1.0,2.0,3.0,4.0,5.0);
         List<Double> outNodes = Arrays.asList(1.0,2.0);
-        Organism o1 =  fabrica.createOrganism();
+        Organism o1 =  fabrica.createOrganismFromSpecimen();
         int numberGenes = o1.getGenomeSize();
         Assert.assertEquals("number created genes wrong", 10, numberGenes);
     }
