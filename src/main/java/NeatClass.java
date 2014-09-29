@@ -176,10 +176,7 @@ public class NeatClass {
          * Прогонять выборку надо несколько эпох. Чем больше номер генерации ГА,
          * тем больше эпох.
          */
-        int numIterations = population.getGenerationNumber() * AppProperties.coefMultiplEpoch();
-        if (numIterations > AppProperties.numberIterationsBP()) {
-            numIterations = AppProperties.numberIterationsBP();
-        }
+        int numIterations = getNumIterations();
 
         // for every organism in population (at the begining)
         // and for every chromosome on the next steps
@@ -285,9 +282,9 @@ public class NeatClass {
              }*/
             int size = fGraphs.size() - 1;
             int last = fGraphs.get(size).getSize_inSample() - 1;
-            if (fGraphs.get(size).getData(0, last) < AppProperties.thresholdGAstopError() & 
-                    fGraphs.get(size).getData(1, last) < AppProperties.thresholdGAstopError() & 
-                    fGraphs.get(size).getData(2, last) < AppProperties.thresholdGAstopError()) {
+            if (fGraphs.get(size).getData(0, last) < AppProperties.thresholdGAstopError()
+                    & fGraphs.get(size).getData(1, last) < AppProperties.thresholdGAstopError()
+                    & fGraphs.get(size).getData(2, last) < AppProperties.thresholdGAstopError()) {
                 break;
             }
 
@@ -306,10 +303,7 @@ public class NeatClass {
 
         //for graph graph
         if (localError != null) {
-            int numIterations = population.getGenerationNumber() * AppProperties.coefMultiplEpoch();
-            if (numIterations > AppProperties.numberIterationsBP()) {
-                numIterations = AppProperties.numberIterationsBP();
-            }
+            int numIterations = getNumIterations();
             GraphDate gData = new GraphDate(localError, numIterations, population.getGenerationNumber());
             return gData;
         }
@@ -330,5 +324,18 @@ public class NeatClass {
 
     public int getNumberTrainingSample() {
         return samples.get(0).size();
+    }
+
+    private int getNumIterations() {
+        int numIterations;
+        if (population.getGenerationNumber() > 20) {
+            numIterations = population.getGenerationNumber() * AppProperties.coefMultiplEpoch() * 2;
+        } else {
+            numIterations = population.getGenerationNumber() * AppProperties.coefMultiplEpoch();
+        }
+        if (numIterations > AppProperties.numberIterationsBP()) {
+            numIterations = AppProperties.numberIterationsBP();
+        }
+        return numIterations;
     }
 }
