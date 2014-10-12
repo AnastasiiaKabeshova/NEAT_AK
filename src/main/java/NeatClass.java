@@ -130,6 +130,42 @@ public class NeatClass {
         }
     }
 
+    private double getMean(List<Double> data) {
+        double sum = 0.0;
+        for (double a : data) {
+            sum += a;
+        }
+        return sum / data.size();
+    }
+
+    double getVariance(List<Double> data) {
+        double mean = getMean(data);
+        double temp = 0;
+        for (double a : data) {
+            temp += (mean - a) * (mean - a);
+        }
+        return temp / data.size();
+    }
+
+    double getStdDev(List<Double> data) {
+        return Math.sqrt(getVariance(data));
+    }
+
+    public void standartisation() {
+        //for each col in data
+        for (int i = 0; i < datas.get(0).size(); i++) {
+            List<Double> data = new ArrayList<>();
+            for (int j = 0; j < datas.size(); j++) {
+                data.add(datas.get(j).get(i));
+            }
+            double mean = getMean(data);
+            double ecartType = getStdDev(data);
+            for (int j = 0; j < datas.size(); j++) {
+                datas.get(j).set(i, (datas.get(j).get(i) - mean) / ecartType);
+            }
+        }
+    }
+
     public void makeThreeSamplesRandomized() {
         samples.clear();
         samples.add(new ArrayList<Integer>());
@@ -337,5 +373,25 @@ public class NeatClass {
             numIterations = AppProperties.numberIterationsBP();
         }
         return numIterations;
+    }
+
+    List<List<Double>> getBestOrganismAnswers() throws Exception {
+        List< List<Double>> answers_results = new ArrayList<>();
+        int counter = 0;
+        for (int i = 0; i < samples.size(); i++) {
+            for (int j = 0; j < samples.get(i).size(); j++) {
+                //count fitness and error for every data line
+                List<Double> outNodes = new ArrayList<>();
+                outNodes.add(answers.get(samples.get(i).get(j)));
+                population.getBestOrganism().setInputData(datas.get(samples.get(i).get(j)), outNodes);
+                population.getBestOrganism().countFitnessOut();
+                double result = population.getBestOrganism().getNet().getOut4Organism();
+                answers_results.add(new ArrayList<Double>());
+                answers_results.get(counter).add(answers.get(samples.get(i).get(j)));
+                answers_results.get(counter).add(result);
+                counter++;
+            }
+        }
+        return answers_results;
     }
 }

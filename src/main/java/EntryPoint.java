@@ -1,6 +1,7 @@
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,7 +39,8 @@ public class EntryPoint {
         neatANN.readInputDataFromExcel(AppProperties.fileName(), AppProperties.answerColNumber());
         // for pc
         //neatANN.readInputDataFromExcel("c:/Users/Administrateur/Desktop/these_softPartie/database/PCR4_PCPA_test_20.xls", 24);
-        neatANN.normalization();
+        //neatANN.normalization();
+        neatANN.standartisation();
 
         neatANN.makeThreeSamplesRandomized();
         neatANN.buildPopulation();
@@ -46,7 +48,6 @@ public class EntryPoint {
         //NeatClass.p_GA_max_iterations = 30;
         List< GraphDate> dataToPrint = neatANN.NEATalgorithm();
 
-        int counter = 0;
         for (GraphDate graphDate : dataToPrint) {
             // create images
             XYSeries series1 = new XYSeries("Training error");
@@ -63,7 +64,7 @@ public class EntryPoint {
                 series2.add(i + 1, graphDate.getData(1, i));
                 series3.add(i + 1, graphDate.getData(2, i));
             }
-            counter++;
+            
             final JFreeChart chart = createSimpleChart(dataset);
             /*final Marker iteration = new ValueMarker(175.0);
             iteration.setPaint(Color.darkGray);
@@ -71,6 +72,9 @@ public class EntryPoint {
             iteration.setLabelTextAnchor(TextAnchor.TOP_CENTER);*/
             ChartUtilities.saveChartAsJPEG(new File("generation_No_" + graphDate.getGenerationNumber() + ".jpeg"), chart, 800, 600);
         }
+        
+        // resultats og best organism
+        writeBestOrganism();
 
     }
 
@@ -86,6 +90,22 @@ public class EntryPoint {
                 false // urls
         );
         return chart;
+    }
+
+    private static void writeBestOrganism() throws Exception {
+        String path = "bestOrganism.txt";
+        EcritureTXTfichier toFile = new EcritureTXTfichier(path);
+        toFile.writeToFile(path);
+
+        List< List<Double>> answers_results = new ArrayList<>();
+        answers_results = neatANN.getBestOrganismAnswers();
+        for (int i = 0; i < answers_results.size(); i++) {
+            for (int j = 0; j < answers_results.get(i).size(); j++) {
+                toFile.appendToFile(true, answers_results.get(i).get(j));
+            }
+            toFile.appendToFile(true, "\n");
+        }
+        
     }
 
 }
